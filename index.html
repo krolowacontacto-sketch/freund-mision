@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1f42">
+<meta name="description" content="Contanos como funciona Freund y deja el auto impecable.">
+<meta name="robots" content="noindex">
+</head>
+<body>
+<title>Misión Freund</title>
+<style>
+  :root {
+    --acero: #0f1f42;
+    --acero-2: #16264d;
+    --rojo: #e23b3b;
+    --rojo-dark: #b82424;
+    --ambar: #ffc907;
+    --ambar-dark: #c98f02;
+    --paper: #eef1f7;
+    --ink: #131a2a;
+    --muted: #59627a;
+    --line: #d9dfec;
+    --verde: #25D366;
+    --verde-dark: #1aa851;
+  }
+  * { box-sizing: border-box; }
+  html { height: 100%; }
+  body {
+    margin: 0;
+    height: 100dvh;
+    overflow: hidden;
+    color: var(--ink);
+    font-family: 'Manrope', system-ui, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 12px;
+    background-color: var(--acero);
+    background-image:
+      radial-gradient(ellipse 900px 700px at 50% -10%, var(--acero-2), transparent 68%),
+      repeating-linear-gradient(45deg, rgba(255,255,255,0.022) 0 2px, transparent 2px 15px),
+      repeating-linear-gradient(-45deg, rgba(255,255,255,0.022) 0 2px, transparent 2px 15px);
+  }
+  .app {
+    width: 100%;
+    max-width: 440px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  /* barra: puesto + avance de la OT */
+  .topbar {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 0 2px;
+  }
+  .rank-badge {
+    flex-shrink: 0;
+    background: var(--ambar);
+    color: #4a2e00;
+    font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+    font-weight: 700;
+    font-size: 13.5px;
+    letter-spacing: 0.05em;
+    padding: 4px 9px;
+    border-radius: 5px;
+    box-shadow: 0 3px 0 var(--ambar-dark);
+    white-space: nowrap;
+  }
+  .rank-badge.bump { animation: bump .45s ease; }
+  @keyframes bump {
+    0% { transform: scale(1); }
+    35% { transform: scale(1.22) rotate(-4deg); }
+    100% { transform: scale(1); }
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 9px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--rojo), var(--ambar));
+    transition: width .5s cubic-bezier(.2,.8,.2,1);
+  }
+  .progress-count {
+    flex-shrink: 0;
+    font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: #cfd6ea;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* EL TALLER: el auto entra abollado y sale impecable */
+  .stage {
+    flex: 0 1 auto;
+    min-height: 0;
+    display: flex;
+    justify-content: center;
+  }
+  .stage.hit { animation: stagehit .5s cubic-bezier(.3,1.3,.4,1); }
+  @keyframes stagehit {
+    0% { transform: translateY(0) scale(1); }
+    30% { transform: translateY(-6px) scale(1.02); }
+    55% { transform: translateY(2px) scale(0.995); }
+    100% { transform: translateY(0) scale(1); }
+  }
+  .stage svg {
+    height: clamp(132px, 26vh, 205px);
+    width: 100%;
+    max-width: 100%;
+  }
+  .wheel { animation: spin 2.6s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #carDamage, #carSmoke, #carShine, #carSparkle { transition: opacity .7s ease; }
+  #gradTop, #gradBottom { transition: stop-color .7s ease; }
+  .smoke-puff { animation: puff 2.8s ease-out infinite; }
+  .smoke-puff:nth-of-type(2) { animation-delay: .9s; }
+  .smoke-puff:nth-of-type(3) { animation-delay: 1.8s; }
+  @keyframes puff {
+    0% { transform: translate(0,0) scale(.5); opacity: .5; }
+    100% { transform: translate(-14px,-24px) scale(1.5); opacity: 0; }
+  }
+  .sparkle { animation: twinkle 1.5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .sparkle:nth-of-type(2) { animation-delay: .5s; }
+  .sparkle:nth-of-type(3) { animation-delay: 1s; }
+  @keyframes twinkle {
+    0%, 100% { transform: scale(.4); opacity: .15; }
+    50% { transform: scale(1.2); opacity: 1; }
+  }
+  .logo-star { transition: fill .5s ease, opacity .5s ease; }
+
+  .stage-caption {
+    flex: 0 0 auto;
+    text-align: center;
+    font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin: 0;
+  }
+
+  /* estrellitas Freund recolectadas */
+  .star-strip {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    padding: 2px;
+    min-height: 20px;
+  }
+  .star-slot {
+    width: 18px; height: 18px;
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.14);
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  }
+  .star-slot.got {
+    background: var(--ambar);
+    animation: starpop .45s cubic-bezier(.3,1.5,.4,1);
+  }
+  @keyframes starpop {
+    0% { transform: scale(0) rotate(-60deg); }
+    100% { transform: scale(1) rotate(0); }
+  }
+
+  .card {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 18px;
+    padding: 26px 22px 22px;
+    box-shadow: 0 20px 50px -18px rgba(0,0,0,0.6);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  /* franja de peligro: el lenguaje visual del taller */
+  .card::before {
+    content: '';
+    position: sticky;
+    top: -26px;
+    display: block;
+    margin: -26px -22px 14px;
+    height: 7px;
+    background: repeating-linear-gradient(45deg, var(--ambar) 0 12px, var(--acero) 12px 24px);
+  }
+
+  /* PANTALLA DE INICIO */
+  h1 {
+    font-family: 'Bungee', Impact, sans-serif;
+    font-weight: 400;
+    font-size: clamp(19px, 5.2vw, 23px);
+    line-height: 1.25;
+    margin: 0 0 10px;
+    color: var(--acero);
+    text-wrap: balance;
+  }
+  .lead {
+    font-size: clamp(13.5px, 3.7vw, 15px);
+    line-height: 1.6;
+    color: var(--muted);
+    margin: 0 0 12px;
+  }
+  .lead strong { color: var(--ink); }
+  .chips-preview {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .mini-chip {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--acero);
+    background: var(--paper);
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-family: 'Baloo 2', sans-serif;
+  }
+  .resume-box {
+    background: #fffaf0;
+    border: 2px solid var(--ambar);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 14px;
+  }
+  .resume-box p {
+    margin: 0 0 10px;
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.45;
+  }
+  .resume-actions { display: flex; align-items: center; gap: 14px; }
+  .btn-resume {
+    background: var(--acero);
+    color: #fff;
+    border: none;
+    padding: 9px 15px;
+    border-radius: 9px;
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: 13.5px;
+    cursor: pointer;
+  }
+  .btn-primary {
+    margin-top: auto;
+    background: var(--rojo);
+    color: #fff;
+    border: none;
+    padding: 15px;
+    border-radius: 12px;
+    font-family: 'Bungee', Impact, sans-serif;
+    font-size: clamp(13.5px, 3.8vw, 15px);
+    font-weight: 400;
+    cursor: pointer;
+    box-shadow: 0 5px 0 var(--rojo-dark);
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .btn-primary:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--rojo-dark); }
+
+  /* PANTALLA DE PREGUNTA */
+  .q-tag {
+    font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    color: var(--rojo);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .q-tag svg { flex-shrink: 0; }
+  .q-title {
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: clamp(16.5px, 4.6vw, 20px);
+    line-height: 1.32;
+    color: var(--acero);
+    margin: 0 0 14px;
+    text-wrap: balance;
+  }
+  .q-body { flex: 1; display: flex; flex-direction: column; }
+
+  textarea, input[type=text] {
+    width: 100%;
+    border: 2px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 15px;
+    resize: none;
+    color: var(--ink);
+    background: var(--paper);
+  }
+  textarea:focus, input[type=text]:focus { outline: none; border-color: var(--rojo); }
+  textarea { min-height: clamp(64px, 13vh, 96px); }
+  .extra-input { margin-top: 9px; min-height: clamp(46px, 8vh, 60px); font-size: 13.5px; }
+
+  .btn-audio {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 9px;
+    background: #fff;
+    border: 2px dashed var(--line);
+    color: var(--acero);
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .btn-audio:hover { border-color: var(--verde); background: #f2fbf6; }
+  .btn-audio.listening { border-style: solid; border-color: var(--rojo); background: #fff3f3; color: var(--rojo); animation: mic-pulse 1.1s ease-in-out infinite; }
+  @keyframes mic-pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(226,59,59,0.35); } 50% { box-shadow: 0 0 0 6px rgba(226,59,59,0); } }
+
+  .chip-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    border: 2px solid var(--line);
+    background: #fff;
+    color: var(--acero);
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 9px 13px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: border-color .12s ease, background .12s ease, color .12s ease;
+  }
+  .chip:hover { border-color: var(--rojo); }
+  .chip.selected { background: var(--rojo); border-color: var(--rojo); color: #fff; }
+
+  .q-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .skip-link {
+    font-size: 12.5px;
+    color: var(--muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+    font-family: 'Manrope', sans-serif;
+  }
+  .btn-next {
+    background: var(--acero);
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 14.5px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #08122b;
+  }
+  .btn-next:active { transform: translateY(3px); box-shadow: none; }
+
+  .xp-float {
+    position: absolute;
+    top: 16px; right: 18px;
+    font-family: 'Bungee', Impact, sans-serif;
+    color: var(--ambar-dark);
+    font-size: 14px;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 2;
+    white-space: nowrap;
+  }
+  .xp-float.show { animation: floatup 1.1s ease forwards; }
+  @keyframes floatup {
+    0% { opacity: 0; transform: translateY(0) scale(.8); }
+    20% { opacity: 1; transform: translateY(-6px) scale(1.1); }
+    100% { opacity: 0; transform: translateY(-40px) scale(1); }
+  }
+
+  .rank-toast {
+    position: fixed;
+    top: 12px; left: 50%;
+    transform: translate(-50%, -80px);
+    max-width: 92vw;
+    background: var(--acero);
+    color: #fff;
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: 13.5px;
+    line-height: 1.4;
+    padding: 11px 16px;
+    border-radius: 10px;
+    border-left: 5px solid var(--ambar);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.45);
+    z-index: 60;
+    opacity: 0;
+    transition: transform .35s cubic-bezier(.3,1.2,.4,1), opacity .35s ease;
+  }
+  .rank-toast.show { transform: translate(-50%, 0); opacity: 1; }
+
+  /* PANTALLA FINAL */
+  h2 {
+    font-family: 'Bungee', Impact, sans-serif;
+    font-weight: 400;
+    font-size: clamp(17px, 4.8vw, 20px);
+    color: var(--acero);
+    text-align: center;
+    margin: 0 0 8px;
+    text-wrap: balance;
+  }
+  .final-rank {
+    text-align: center;
+    font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--rojo);
+    margin: 0 0 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .name-ask {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin: 0 0 6px;
+    font-weight: 600;
+  }
+  .end-sub {
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+    margin: 12px 0;
+    line-height: 1.5;
+  }
+  .summary-box {
+    background: var(--paper);
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 12px;
+    color: var(--muted);
+    white-space: pre-wrap;
+    max-height: 120px;
+    overflow-y: auto;
+    margin-bottom: 12px;
+    font-family: 'Courier New', monospace;
+    line-height: 1.5;
+    border: 1px solid var(--line);
+  }
+  .btn-whatsapp {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: var(--verde);
+    color: #fff;
+    text-decoration: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    box-shadow: 0 4px 0 var(--verde-dark);
+    margin-bottom: 9px;
+  }
+  .btn-copy {
+    background: none;
+    border: 2px solid var(--line);
+    color: var(--muted);
+    padding: 10px;
+    border-radius: 10px;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 12.5px;
+    cursor: pointer;
+  }
+  .btn-copy.copied { border-color: var(--verde); color: var(--verde-dark); }
+
+  .hidden { display: none !important; }
+
+  .mute-btn {
+    position: fixed;
+    top: 10px; right: 10px;
+    width: 32px; height: 32px;
+    border-radius: 7px;
+    background: rgba(255,255,255,0.12);
+    border: 1.5px solid rgba(255,255,255,0.25);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    z-index: 70;
+  }
+
+  .confetti-field { position: fixed; inset: 0; pointer-events: none; z-index: 50; overflow: hidden; }
+  .confetti-piece { position: absolute; top: -20px; animation: fall linear forwards; }
+  @keyframes fall { to { transform: translateY(110vh) rotate(540deg); } }
+
+  :focus-visible { outline: 3px solid var(--ambar); outline-offset: 2px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  }
+</style>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;700&family=Baloo+2:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap">
+
+<button class="mute-btn" id="muteBtn" onclick="toggleMute()" aria-label="Silenciar sonidos">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><g id="muteIcon"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M16 8a5 5 0 0 1 0 8M19 5a9 9 0 0 1 0 14"/></g></svg>
+</button>
+
+<div class="app">
+  <div class="topbar hidden" id="topbar">
+    <div class="rank-badge" id="rankBadge">🔧 APRENDIZ</div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-count" id="progressCount">0/12</div>
+  </div>
+
+  <div class="stage" id="stage">
+    <svg viewBox="0 18 340 172" preserveAspectRatio="xMidYMax meet" role="img" aria-label="El taller Freund con el auto de la orden de trabajo, que se repara con cada respuesta">
+      <defs>
+        <linearGradient id="carGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop id="gradTop" offset="0" stop-color="#79808f"/>
+          <stop id="gradBottom" offset="1" stop-color="#454c5d"/>
+        </linearGradient>
+        <linearGradient id="rimGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#e8edf6"/>
+          <stop offset="1" stop-color="#8e99ae"/>
+        </linearGradient>
+        <linearGradient id="lightCone" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#ffd76a" stop-opacity="0.30"/>
+          <stop offset="1" stop-color="#ffd76a" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="floorGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2c3550"/>
+          <stop offset="1" stop-color="#151c2e"/>
+        </linearGradient>
+        <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur stdDeviation="2.6"/>
+        </filter>
+        <pattern id="hazard" width="16" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <rect width="16" height="8" fill="#141b2c"/>
+          <rect width="8" height="8" fill="#ffc907"/>
+        </pattern>
+      </defs>
+
+      <!-- pared del taller -->
+      <rect x="0" y="0" width="340" height="158" fill="#0b1730"/>
+      <g stroke="#16284a" stroke-width="1.4" opacity="0.9">
+        <line x1="0" y1="56" x2="340" y2="56"/>
+        <line x1="0" y1="86" x2="340" y2="86"/>
+        <line x1="0" y1="116" x2="340" y2="116"/>
+        <line x1="46" y1="56" x2="46" y2="158"/>
+        <line x1="294" y1="56" x2="294" y2="158"/>
+      </g>
+
+      <!-- luz del taller sobre el auto -->
+      <path d="M170 76 L26 176 L314 176 Z" fill="url(#lightCone)"/>
+
+      <!-- cartel real de FREUND, con las 5 estrellitas -->
+      <rect x="86" y="34" width="168" height="44" rx="7" fill="#091327" stroke="#20365e" stroke-width="1.6"/>
+      <image href="data:image/png;base64,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" x="98" y="39" width="144" height="21" preserveAspectRatio="xMidYMid meet"/>
+      <g id="logoStars"></g>
+
+      <!-- piso -->
+      <rect x="0" y="158" width="340" height="42" fill="url(#floorGrad)"/>
+      <rect x="0" y="152" width="340" height="7" fill="url(#hazard)"/>
+      <line x1="0" y1="176" x2="340" y2="176" stroke="#0d1322" stroke-width="1.4" opacity="0.7"/>
+
+      <!-- cajón de herramientas -->
+      <g>
+        <rect x="6" y="122" width="34" height="36" rx="3" fill="#a32c2c"/>
+        <rect x="9" y="127" width="28" height="8" rx="2" fill="#c94040"/>
+        <rect x="9" y="138" width="28" height="8" rx="2" fill="#c94040"/>
+        <rect x="9" y="149" width="28" height="6" rx="2" fill="#c94040"/>
+      </g>
+      <!-- neumáticos apilados -->
+      <g fill="#161d2e" stroke="#0c1120" stroke-width="1">
+        <ellipse cx="318" cy="138" rx="19" ry="6.5"/>
+        <ellipse cx="318" cy="128" rx="19" ry="6.5"/>
+        <ellipse cx="318" cy="118" rx="19" ry="6.5"/>
+      </g>
+
+      <!-- humo del escape -->
+      <g id="carSmoke">
+        <circle class="smoke-puff" cx="44" cy="170" r="7" fill="#9aa3b6" opacity="0.6"/>
+        <circle class="smoke-puff" cx="44" cy="170" r="10" fill="#8d96aa" opacity="0.5"/>
+        <circle class="smoke-puff" cx="44" cy="170" r="6" fill="#9aa3b6" opacity="0.55"/>
+        <circle class="smoke-puff" cx="52" cy="166" r="8" fill="#7f889c" opacity="0.45"/>
+      </g>
+
+      <!-- EL AUTO -->
+      <g transform="translate(24, 58) scale(1.26)">
+        <ellipse cx="120" cy="96" rx="104" ry="8" fill="#000" opacity="0.4"/>
+
+        <path id="carBody" fill="url(#carGrad)"
+          d="M14 84 C14 73 18 67 28 65 L38 63 C41 51 49 42 61 38 L94 30 C106 27 122 26 136 28 C150 30 160 35 168 43 L186 58 L208 62 C220 64 226 70 226 80 L226 88 C226 91 224 92 221 92 L19 92 C16 92 14 91 14 88 Z"/>
+
+        <path d="M46 60 C49 50 56 43 66 40 L84 35 L84 60 Z" fill="#b7c5dd"/>
+        <path d="M90 34 L110 31 L110 60 L90 60 Z" fill="#b7c5dd"/>
+        <path d="M116 30 C128 29 140 31 148 37 L160 51 L116 60 Z" fill="#c7d3e7"/>
+        <path d="M46 60 C49 50 56 43 66 40 L84 35 L84 60 Z" fill="#0d1424" opacity="0.18"/>
+        <path d="M116 30 C128 29 140 31 148 37 L160 51 L116 60 Z" fill="#ffffff" opacity="0.22"/>
+
+        <path d="M86 33 L86 60" stroke="#31394c" stroke-width="3.4" stroke-linecap="round"/>
+        <path d="M88 62 L88 88" stroke="#000" stroke-width="1.2" opacity="0.28"/>
+        <path d="M160 62 L166 86" stroke="#000" stroke-width="1.2" opacity="0.22"/>
+        <rect x="96" y="66" width="15" height="4" rx="2" fill="#38405a"/>
+        <path d="M112 59 L123 55 L126 61 L114 63 Z" fill="#2f374d"/>
+
+        <path d="M30 88 L212 88" stroke="#0e1424" stroke-width="5" stroke-linecap="round" opacity="0.8"/>
+        <path d="M209 66 C220 66 225 71 225 77 L206 78 Z" fill="#fff3c4"/>
+        <path d="M209 66 C220 66 225 71 225 77 L206 78 Z" fill="none" stroke="#0e1424" stroke-width="1" opacity="0.5"/>
+        <rect x="15" y="68" width="12" height="9" rx="2.5" fill="#e05252"/>
+        <path d="M212 82 h13 M212 86 h13" stroke="#0e1424" stroke-width="1.6" opacity="0.6" stroke-linecap="round"/>
+
+        <path id="carShine" opacity="0" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-opacity="0.8"
+          d="M36 74 C84 68 150 66 204 70" stroke-width="3.6"/>
+
+        <path d="M46 92 A20 20 0 0 1 86 92 Z" fill="#0a0f1c"/>
+        <path d="M160 92 A20 20 0 0 1 200 92 Z" fill="#0a0f1c"/>
+
+
+        <g class="wheel" style="transform-origin: 66px 92px;">
+          <circle cx="66" cy="92" r="18" fill="#11172a"/>
+          <circle cx="66" cy="92" r="18" fill="none" stroke="#070a14" stroke-width="2"/>
+          <circle cx="66" cy="92" r="10" fill="url(#rimGrad)"/>
+          <g stroke="#7d879c" stroke-width="2.4" stroke-linecap="round">
+            <line x1="66" y1="92" x2="66" y2="83"/>
+            <line x1="66" y1="92" x2="74.6" y2="94.8"/>
+            <line x1="66" y1="92" x2="71.3" y2="99.3"/>
+            <line x1="66" y1="92" x2="60.7" y2="99.3"/>
+            <line x1="66" y1="92" x2="57.4" y2="94.8"/>
+          </g>
+          <circle cx="66" cy="92" r="3.2" fill="#9aa5ba"/>
+        </g>
+        <g class="wheel" style="transform-origin: 180px 92px;">
+          <circle cx="180" cy="92" r="18" fill="#11172a"/>
+          <circle cx="180" cy="92" r="18" fill="none" stroke="#070a14" stroke-width="2"/>
+          <circle cx="180" cy="92" r="10" fill="url(#rimGrad)"/>
+          <g stroke="#7d879c" stroke-width="2.4" stroke-linecap="round">
+            <line x1="180" y1="92" x2="180" y2="83"/>
+            <line x1="180" y1="92" x2="188.6" y2="94.8"/>
+            <line x1="180" y1="92" x2="185.3" y2="99.3"/>
+            <line x1="180" y1="92" x2="174.7" y2="99.3"/>
+            <line x1="180" y1="92" x2="171.4" y2="94.8"/>
+          </g>
+          <circle cx="180" cy="92" r="3.2" fill="#9aa5ba"/>
+        </g>
+
+        <g id="carDamage">
+          <ellipse cx="120" cy="99" rx="48" ry="5" fill="#0a0d16" opacity="0.75" filter="url(#soft)"/>
+          <ellipse cx="88" cy="100" rx="15" ry="3.4" fill="#241a06" opacity="0.85" filter="url(#soft)"/>
+
+          <ellipse cx="58" cy="74" rx="23" ry="13" fill="#1b2131" opacity="0.8" filter="url(#soft)"/>
+          <ellipse cx="112" cy="78" rx="21" ry="12" fill="#1b2131" opacity="0.65" filter="url(#soft)"/>
+          <ellipse cx="196" cy="70" rx="19" ry="11" fill="#1b2131" opacity="0.8" filter="url(#soft)"/>
+          <ellipse cx="150" cy="53" rx="17" ry="9" fill="#1b2131" opacity="0.6" filter="url(#soft)"/>
+          <ellipse cx="34" cy="72" rx="14" ry="9" fill="#1b2131" opacity="0.6" filter="url(#soft)"/>
+
+          <path d="M96 30 C110 37 124 37 138 29" fill="#1b2131" opacity="0.55" filter="url(#soft)"/>
+          <path d="M98 31 C112 38 126 38 140 30" stroke="#0d121e" stroke-width="2.2" fill="none" opacity="0.75"/>
+
+          <g stroke="#0d121e" stroke-width="1.7" fill="none" opacity="0.9" stroke-linecap="round">
+            <path d="M44 68l8 8-6 6"/>
+            <path d="M57 64l6 10-8 5"/>
+            <path d="M104 70l10 6-7 7"/>
+            <path d="M186 62l7 9-9 4"/>
+            <path d="M199 64l5 10"/>
+            <path d="M168 46l6 8-7 4"/>
+          </g>
+
+          <g stroke="#dde5f2" stroke-width="1.6" fill="none" opacity="0.8" stroke-linecap="round">
+            <path d="M40 80C80 76 140 77 190 82"/>
+            <path d="M62 86C100 83 150 84 186 88"/>
+            <path d="M120 66C140 64 160 65 176 68"/>
+          </g>
+
+          <ellipse cx="28" cy="84" rx="14" ry="8" fill="#8a5320" opacity="0.75" filter="url(#soft)"/>
+          <ellipse cx="47" cy="88" rx="10" ry="5" fill="#7a4718" opacity="0.65" filter="url(#soft)"/>
+          <ellipse cx="214" cy="85" rx="11" ry="6" fill="#8a5320" opacity="0.6" filter="url(#soft)"/>
+
+          <g stroke="#f2f6fd" stroke-width="1.1" fill="none" opacity="0.95">
+            <path d="M132 42L116 30M132 42L148 33M132 42L159 48M132 42L146 58M132 42L124 58M132 42L117 49"/>
+            <path d="M124 36L141 38L150 45L142 54L127 54L120 46Z"/>
+            <path d="M119 32L147 32L158 46L148 58L122 58L114 45Z"/>
+          </g>
+
+          <path d="M90 34L110 31L110 60L90 60Z" fill="#080d18"/>
+          <path d="M90 34l7 10-6 8 8 6 11-3-7-11 7-6-9-5z" fill="#18202f"/>
+          <g stroke="#c9d6ea" stroke-width="1" fill="none" opacity="0.9">
+            <path d="M90 34l7 10-6 8 8 6"/>
+            <path d="M110 38l-6 6 6 11"/>
+          </g>
+
+          <g stroke="#eef3fb" stroke-width="1.1" fill="none" opacity="0.9">
+            <path d="M62 42L70 60M70 46L58 52M70 46L82 44"/>
+          </g>
+
+          <path d="M113 60C118 64 120 68 119 72" stroke="#2f374d" stroke-width="1.4" fill="none"/>
+          <path d="M115 72L124 70L126 76L117 78Z" fill="#2f374d"/>
+
+          <path d="M209 66C220 66 225 71 225 77L206 78Z" fill="#080d18"/>
+          <g stroke="#59627a" stroke-width="1.2" fill="none">
+            <path d="M212 70C216 73 214 76 218 77"/>
+            <path d="M216 68C220 71 218 75 222 76"/>
+          </g>
+
+          <path d="M222 84L243 99L236 103L216 88Z" fill="#4c5468"/>
+          <path d="M222 84L243 99" stroke="#0e1424" stroke-width="1" opacity="0.6"/>
+          <path d="M14 84L1 94L7 98L18 89Z" fill="#4c5468"/>
+
+          <ellipse cx="66" cy="96" rx="19" ry="13" fill="#11172a"/>
+          <ellipse cx="66" cy="94" rx="10" ry="8" fill="#6e7789"/>
+          <path d="M47 98C56 105 78 105 85 98" stroke="#070a14" stroke-width="2.2" fill="none"/>
+
+          <g fill="#c9d6ea" opacity="0.85">
+            <path d="M96 97l3 1-2 2z"/><path d="M106 99l3 1-2 2z"/>
+            <path d="M118 96l2.5 1-1.5 2z"/><path d="M88 99l2.5 1-1.5 2z"/>
+            <path d="M130 98l2.5 1-1.5 2z"/>
+          </g>
+        </g>
+      </g>
+
+      <g id="carSparkle" opacity="0" fill="#ffc907">
+        <path class="sparkle" d="M34 104l2.6 6.1L43 113l-6.4 2.6L34 122l-2.6-6.4L25 113l6.4-2.9z"/>
+        <path class="sparkle" d="M318 96l2.2 5.2 5.2 2.2-5.2 2.2-2.2 5.2-2.2-5.2-5.2-2.2 5.2-2.2z"/>
+        <path class="sparkle" d="M188 86l1.8 4.3 4.3 1.8-4.3 1.8-1.8 4.3-1.8-4.3-4.3-1.8 4.3-1.8z"/>
+      </g>
+    </svg>
+  </div>
+  <p class="stage-caption" id="stageCaption">Entró abollado · lo dejás impecable respondiendo</p>
+
+  <div class="star-strip hidden" id="starStrip"></div>
+
+  <!-- INICIO -->
+  <div class="card" id="screen-start">
+    <h1>¡Hola, guerrero Muebo! 🔧</h1>
+    <p class="lead">Ese auto de ahí arriba entró hecho percha. <strong>Vos lo vas a dejar impecable</strong> respondiendo las preguntas. Ninguna está mal: la que no sepas, la pasás y seguimos. Dos minutos y estamos.</p>
+    <div class="chips-preview">
+      <span class="mini-chip">⭐ Juntás las 12 estrellitas</span>
+      <span class="mini-chip">🏁 Ascendés en cada respuesta</span>
+      <span class="mini-chip">🎙️ Se puede hablar en vez de escribir</span>
+    </div>
+    <div class="resume-box hidden" id="resumeBox">
+      <p id="resumeText"></p>
+      <div class="resume-actions">
+        <button class="btn-resume" onclick="resumeQuiz()">Seguir donde quedé</button>
+        <button class="skip-link" onclick="discardProgress()">empezar de cero</button>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="startQuiz()">Dale, arranquemos →</button>
+  </div>
+
+  <!-- PREGUNTAS -->
+  <div class="card hidden" id="screen-quiz">
+    <div class="xp-float" id="xpFloat">⭐ +1</div>
+    <div class="q-tag" id="qTag">OT 01</div>
+    <h3 class="q-title" id="qTitle"></h3>
+    <div class="q-body" id="qBody"></div>
+    <div class="q-footer">
+      <button class="skip-link" onclick="skipQuestion()">esta no la sé, paso</button>
+      <button class="btn-next" onclick="nextQuestion()">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- FINAL -->
+  <div class="card hidden" id="screen-end">
+    <h2 id="endTitle">¡OT CERRADA, CRACK! 🏁</h2>
+    <div class="final-rank" id="finalRank">Puesto alcanzado: Aprendiz</div>
+    <p class="name-ask">¿Quién me contó todo esto?</p>
+    <input type="text" id="playerName" placeholder="Tu nombre" oninput="onNameTyped()">
+    <p class="end-sub" id="endSub">Guardando todo…</p>
+    <div class="summary-box" id="summaryBox"></div>
+    <a class="btn-whatsapp" id="waLink" href="#" target="_blank" rel="noopener" onclick="flushSend()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.6 1.4 5.1L2 22l5.1-1.3C8.5 21.5 10.2 22 12 22c5.5 0 10-4.5 10-10S17.5 2 12 2zm5.9 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5.1-4.5-.1-.2-1.2-1.6-1.2-3.1s.8-2.2 1.1-2.5c.3-.3.6-.3.8-.3h.6c.2 0 .5 0 .7.6.3.7.9 2.3 1 2.4.1.2.1.3 0 .5-.1.2-.1.3-.3.5-.1.2-.3.4-.4.5-.2.2-.3.4-.1.7.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.5 1.5.3.1.5.1.6-.1.2-.2.7-.8.9-1.1.2-.3.4-.2.6-.1.2.1 1.6.8 1.9 1 .3.1.5.2.5.3.1.2.1.6-.1 1.3z"/></svg>
+      Mandame las respuestas
+    </a>
+    <button class="btn-copy" id="copyBtn" onclick="copySummary()">Copiar texto</button>
+  </div>
+</div>
+
+<div class="confetti-field" id="confetti"></div>
+<div class="rank-toast" id="rankToast"></div>
+
+<script>
+  // Número al que llega el resumen por WhatsApp, formato internacional sin + ni espacios
+  // (ej: 5491122334455). Vacío = el que juega elige a mano a quién mandárselo.
+  var WA_DESTINO = '5491134818383';
+
+  // URL del Apps Script que escribe en la planilla (termina en /exec).
+  // OJO: desde el link de Claude esta llamada la bloquea el sandbox del visor;
+  // funciona cuando el archivo está publicado en un hosting propio.
+  var WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzzbQcWu5cbYMjVZyPH-8o_cgOr-R8B9pELiR9ImjM4QSjDGjR_zlYaSFXD4hjuG_4k/exec';
+
+  var SAVE_KEY = 'mision-freund-ot';
+
+  var questions = [
+    { tag:'OT 01 · RECEPCIÓN', icon:'gauge', type:'text',
+      title:'Contame cómo arrancó el taller: hace cuántos años, y de dónde salió el nombre "Freund"',
+      placeholder:'Como te salga, no hace falta que sea prolijo...' },
+
+    { tag:'OT 02 · RECEPCIÓN', icon:'medal', type:'text',
+      title:'¿Qué hacen ustedes mejor que el taller de la otra cuadra?',
+      placeholder:'Lo que un cliente nota cuando compara...' },
+
+    { tag:'OT 03 · RECEPCIÓN', icon:'car', type:'text',
+      title:'¿Cuál es el auto que sacaste de la cabina y dijiste "mirá cómo quedó"?',
+      placeholder:'El trabajo del que más orgulloso quedaste...' },
+
+    { tag:'OT 04 · DIAGNÓSTICO', icon:'users', type:'chips-multi',
+      title:'¿Quiénes son los que más vuelven al taller?',
+      options:['Particulares','Agencias de usados','Empresas con flota','Los que vienen por el seguro'] },
+
+    { tag:'OT 05 · DIAGNÓSTICO', icon:'megaphone', type:'chips',
+      title:'¿Por dónde llega la mayoría de los clientes nuevos?',
+      options:['Recomendación','Pasando por la calle','Redes sociales','Los manda la aseguradora'],
+      extra:'¿Por otro lado? Contame acá...' },
+
+    { tag:'OT 06 · DIAGNÓSTICO', icon:'shield', type:'chips-multi',
+      title:'¿Con qué aseguradoras laburan más seguido?',
+      options:['La Caja','Sancor','Federación Patronal','Rivadavia','Mercantil Andina','San Cristóbal','Zurich','Allianz','Provincia'],
+      extra:'¿Falta alguna? Agregala acá...' },
+
+    { tag:'OT 07 · DIAGNÓSTICO', icon:'chat', type:'text',
+      title:'¿Qué es lo que TODOS te preguntan antes de dejarte el auto?',
+      placeholder:'Cuánto sale, cuánto tarda, si pierde la garantía...' },
+
+    { tag:'OT 08 · CHAPA Y PINTURA', icon:'spray', type:'chips-multi',
+      title:'¿Qué tipo de trabajo te gustaría que entre más al taller?',
+      options:['Chapa pesada / choques','Pintura completa','Pulido y detalles','Granizo','Flotas de empresa','Trabajos por seguro'],
+      extra:'¿Y cuál preferís que entre menos?' },
+
+    { tag:'OT 09 · CHAPA Y PINTURA', icon:'camera', type:'chips',
+      title:'¿Tienen fotos buenas del taller, la cabina o autos terminados?',
+      options:['Sí, bastantes','Algunas sueltas','Casi nada'],
+      extra:'Si hay, ¿dónde están? (el celu de alguien, Instagram, una carpeta...)' },
+
+    { tag:'OT 10 · LA WEB', icon:'target', type:'chips-multi',
+      title:'Si alguien entra a la web de Freund, ¿qué querés que haga?',
+      options:['Que escriba por WhatsApp','Que pida un presupuesto','Que vea trabajos terminados','Que vea que somos serios','Que sepa dónde estamos y el horario'],
+      extra:'¿Algo más que se te ocurra?' },
+
+    { tag:'OT 11 · LA WEB', icon:'palette', type:'text',
+      title:'¿Hay alguna web o algún negocio que te guste cómo se ve? Puede ser de cualquier rubro — ¿qué te gusta de eso?',
+      placeholder:'Un taller, una marca, un local, lo que sea. Y por qué te gusta...' },
+
+    { tag:'OT 12 · ENTREGA', icon:'clock', type:'text',
+      title:'Últimos datos duros: horario real de atención, y el WhatsApp y el mail que querés que use la gente',
+      placeholder:'Ej: Lunes a viernes de 8 a 18, sábados hasta las 13. WhatsApp 11... / mail...' }
+  ];
+
+  var icons = {
+    gauge: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3.5 17a9 9 0 1 1 17 0"/><path d="M12 17l4.5-5"/></svg>',
+    medal: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="15" r="5.5"/><path d="M8.5 9.6L6 3h12l-2.5 6.6"/></svg>',
+    car: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 16v-3.2l2.2-4.6A2 2 0 0 1 7 7h10a2 2 0 0 1 1.8 1.2L21 12.8V16"/><path d="M3 16h18"/><circle cx="7.5" cy="17.5" r="1.8"/><circle cx="16.5" cy="17.5" r="1.8"/></svg>',
+    users: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.6 2.9-6.2 6.5-6.2S15.5 16.4 15.5 20"/><circle cx="17.5" cy="9" r="2.6"/><path d="M15.8 13.6c2.7.3 4.7 2.6 4.7 5.7"/></svg>',
+    megaphone: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10v4a1 1 0 0 0 1 1h2l4 4V5L6 9H4a1 1 0 0 0-1 1z"/><path d="M15 8a3 3 0 0 1 0 8"/></svg>',
+    shield: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v6c0 5-3.5 7.5-7 9-3.5-1.5-7-4-7-9V6z"/></svg>',
+    chat: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16v11H9l-5 4z"/></svg>',
+    spray: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21V9a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v12z"/><path d="M10 7V4h3v3"/><path d="M18 5h2M18 9h2M17.5 7H21"/></svg>',
+    camera: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.2"/></svg>',
+    target: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4"/></svg>',
+    palette: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 15a2.5 2.5 0 0 0 2 4c3.5 0 5-2.5 6.5-4"/></svg>',
+    clock: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>'
+  };
+
+  // Un ascenso por cada respuesta: la idea es que suba de puesto todo el tiempo.
+  var ranks = [
+    { badge:'APRENDIZ',      emoji:'🔧', grito:'' },
+    { badge:'AYUDANTE',      emoji:'🔩', grito:'¡Ascendiste a AYUDANTE! Ya te dejan tocar las herramientas.' },
+    { badge:'MEDIO OFICIAL', emoji:'🪛', grito:'¡MEDIO OFICIAL! Ya no te mandan a comprar las facturas.' },
+    { badge:'CHAPISTA',      emoji:'🔨', grito:'¡CHAPISTA! Sacás una abolladura sin pensarlo dos veces.' },
+    { badge:'CHAPISTA+',     emoji:'⚒️', grito:'¡CHAPISTA MAYOR! El martillo te obedece.' },
+    { badge:'SOLDADOR',      emoji:'⚡', grito:'¡SOLDADOR! Tirás un punto y queda invisible.' },
+    { badge:'PINTOR',        emoji:'🎨', grito:'¡PINTOR! Te dejaron entrar solo a la cabina.' },
+    { badge:'COLORISTA',     emoji:'🖌️', grito:'¡COLORISTA! Cazás el color a ojo. Impresionante.' },
+    { badge:'PULIDOR',       emoji:'✨', grito:'¡PULIDOR! Dejás una chapa donde te ves la cara.' },
+    { badge:'OFICIAL',       emoji:'🏅', grito:'¡OFICIAL DE CONFIANZA! Te dieron las llaves del taller.' },
+    { badge:'JEFE',          emoji:'🏆', grito:'¡JEFE DE TALLER! Ahora las OT las repartís vos.' },
+    { badge:'MAESTRO',       emoji:'🏁', grito:'¡MAESTRO! Los pibes te miran trabajar para aprender.' },
+    { badge:'LEYENDA',       emoji:'👑', grito:'¡LEYENDA DE OLIVOS! Van a poner una placa con tu nombre en Mariano Pelliza.' }
+  ];
+
+  var piropos = ['⭐ +1', '¡ESO!', '¡CRACK!', '¡TREMENDO!', '¡GENIO!', '¡FIERA!', '¡ORO PURO!'];
+
+  var CAR_ROTO = { top: [103, 109, 123], bottom: [54, 60, 74] };
+  var CAR_SANO = { top: [255, 92, 92], bottom: [176, 32, 32] };
+
+  var idx = 0;
+  var answers = [];
+  var rankIdx = 0;
+  var selection = null;
+  var muted = false;
+  var audioCtx = null;
+  var playerName = '';
+  var recognizer = null;
+  var listening = false;
+  var enviado = false;
+
+  function answeredCount() {
+    return answers.filter(function(item) { return item && item.ok; }).length;
+  }
+
+  /* ---------- el taller: estrellas del cartel y auto que se repara ---------- */
+
+  function starPath(cx, cy, r) {
+    var pts = [];
+    for (var i = 0; i < 10; i++) {
+      var rad = (i % 2 === 0) ? r : r * 0.44;
+      var ang = (Math.PI / 5) * i - Math.PI / 2;
+      pts.push((cx + rad * Math.cos(ang)).toFixed(1) + ',' + (cy + rad * Math.sin(ang)).toFixed(1));
+    }
+    return 'M' + pts.join('L') + 'Z';
+  }
+
+  function buildLogoStars() {
+    var g = document.getElementById('logoStars');
+    var html = '';
+    for (var i = 0; i < 5; i++) {
+      html += '<path class="logo-star" id="logoStar' + i + '" d="' + starPath(118 + i * 26, 68, 8) + '" fill="#23345c"/>';
+    }
+    g.innerHTML = html;
+  }
+
+  function mix(from, to, t) {
+    return 'rgb(' + from.map(function(v, i) { return Math.round(v + (to[i] - v) * t); }).join(',') + ')';
+  }
+
+  function updateStage() {
+    var n = answeredCount();
+    var p = n / questions.length;
+
+    document.getElementById('gradTop').setAttribute('stop-color', mix(CAR_ROTO.top, CAR_SANO.top, p));
+    document.getElementById('gradBottom').setAttribute('stop-color', mix(CAR_ROTO.bottom, CAR_SANO.bottom, p));
+    document.getElementById('carDamage').style.opacity = String(1 - p);
+    document.getElementById('carSmoke').style.opacity = String(Math.max(0, 1 - p * 2.5));
+    document.getElementById('carShine').style.opacity = String(p * 0.85);
+    document.getElementById('carSparkle').style.opacity = p >= 0.999 ? '1' : '0';
+
+    var encendidas = Math.round(p * 5);
+    for (var i = 0; i < 5; i++) {
+      var st = document.getElementById('logoStar' + i);
+      if (st) { st.setAttribute('fill', i < encendidas ? '#ffc907' : '#23345c'); }
+    }
+
+    var cap = document.getElementById('stageCaption');
+    if (p >= 0.999) { cap.textContent = 'Impecable · listo para entregar'; }
+    else if (p >= 0.66) { cap.textContent = 'Saliendo de la cabina · ' + Math.round(p * 100) + '% reparado'; }
+    else if (p >= 0.33) { cap.textContent = 'En chapa · ' + Math.round(p * 100) + '% reparado'; }
+    else if (p > 0) { cap.textContent = 'En diagnóstico · ' + Math.round(p * 100) + '% reparado'; }
+    else { cap.textContent = 'Entró abollado · lo dejás impecable respondiendo'; }
+  }
+
+  function bumpStage() {
+    var stage = document.getElementById('stage');
+    stage.classList.remove('hit'); void stage.offsetWidth; stage.classList.add('hit');
+  }
+
+  function buildStarStrip() {
+    var strip = document.getElementById('starStrip');
+    var html = '';
+    for (var i = 0; i < questions.length; i++) {
+      html += '<div class="star-slot" id="star' + i + '"></div>';
+    }
+    strip.innerHTML = html;
+  }
+
+  function litStar(i) {
+    var el = document.getElementById('star' + i);
+    if (el) { el.classList.add('got'); }
+  }
+
+  /* ---------- guardado local: que no se pierda si cierra el navegador ---------- */
+
+  function saveProgress() {
+    try {
+      localStorage.setItem(SAVE_KEY, JSON.stringify({ idx: idx, answers: answers }));
+    } catch (e) {}
+  }
+
+  function readProgress() {
+    try {
+      var raw = localStorage.getItem(SAVE_KEY);
+      if (!raw) return null;
+      var data = JSON.parse(raw);
+      if (!data || !data.answers || data.idx <= 0 || data.idx >= questions.length) return null;
+      return data;
+    } catch (e) { return null; }
+  }
+
+  function clearProgress() {
+    try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
+  }
+
+  function offerResume() {
+    var data = readProgress();
+    if (!data) return;
+    document.getElementById('resumeText').textContent =
+      'Che, dejaste una orden a medio hacer: llegaste hasta la ' + (data.idx + 1) + ' de ' + questions.length + '. ¿Seguimos por ahí?';
+    document.getElementById('resumeBox').classList.remove('hidden');
+  }
+
+  function resumeQuiz() {
+    var data = readProgress();
+    if (!data) return;
+    answers = data.answers;
+    idx = data.idx;
+    rankIdx = answeredCount();
+    enterQuiz();
+    answers.forEach(function(item, i) { if (item && item.ok) { litStar(i); } });
+    paintRank(false);
+    updateStage();
+    renderQuestion();
+  }
+
+  function discardProgress() {
+    clearProgress();
+    document.getElementById('resumeBox').classList.add('hidden');
+  }
+
+  /* ---------- sonido ---------- */
+
+  function getCtx() {
+    if (!audioCtx) {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      audioCtx = new AC();
+    }
+    if (audioCtx.state === 'suspended') { audioCtx.resume(); }
+    return audioCtx;
+  }
+
+  function beep(freq, duration, delay, type) {
+    if (muted) return;
+    var ctx = getCtx();
+    if (!ctx) return;
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.type = type || 'sine';
+    osc.frequency.value = freq;
+    var t0 = ctx.currentTime + (delay || 0);
+    gain.gain.setValueAtTime(0.0001, t0);
+    gain.gain.exponentialRampToValueAtTime(0.22, t0 + 0.012);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(t0);
+    osc.stop(t0 + duration + 0.02);
+  }
+
+  function playTap() { beep(560, 0.07, 0, 'square'); }
+  function playSkip() { beep(300, 0.09, 0, 'sine'); beep(220, 0.1, 0.06, 'sine'); }
+  function playRankUp() { beep(523, 0.08, 0, 'triangle'); beep(659, 0.08, 0.07, 'triangle'); beep(880, 0.2, 0.14, 'triangle'); }
+  function playFinish() { beep(523, 0.1, 0, 'sine'); beep(659, 0.1, 0.09, 'sine'); beep(784, 0.1, 0.18, 'sine'); beep(1046, 0.32, 0.27, 'sine'); }
+
+  function toggleMute() {
+    muted = !muted;
+    var icon = document.getElementById('muteIcon');
+    icon.innerHTML = muted
+      ? '<path d="M4 9v6h4l5 5V4L8 9H4z"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/>'
+      : '<path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M16 8a5 5 0 0 1 0 8M19 5a9 9 0 0 1 0 14"/>';
+    if (!muted) { getCtx(); }
+  }
+
+  /* ---------- dictado ---------- */
+
+  function hasSpeechRecognition() {
+    return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+  }
+
+  function micLabel() {
+    return '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg> Hablar en vez de escribir';
+  }
+
+  function toggleListening(textareaEl, micBtn) {
+    if (listening) { stopListening(micBtn); return; }
+
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognizer = new SR();
+    recognizer.lang = 'es-AR';
+    recognizer.continuous = true;
+    recognizer.interimResults = true;
+
+    var baseText = textareaEl.value ? (textareaEl.value.trim() + ' ') : '';
+
+    recognizer.onresult = function(event) {
+      var interim = '', final = '';
+      for (var i = event.resultIndex; i < event.results.length; i++) {
+        var transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) { final += transcript + ' '; }
+        else { interim += transcript; }
+      }
+      if (final) { baseText += final; }
+      textareaEl.value = baseText + interim;
+    };
+    recognizer.onerror = function() { stopListening(micBtn); };
+    recognizer.onend = function() { if (listening) { stopListening(micBtn); } };
+
+    try {
+      recognizer.start();
+      listening = true;
+      micBtn.classList.add('listening');
+      micBtn.innerHTML = '🔴 Escuchando… tocá para parar';
+      beep(500, 0.06, 0, 'sine');
+    } catch (e) {
+      stopListening(micBtn);
+    }
+  }
+
+  function stopListening(micBtn) {
+    listening = false;
+    if (recognizer) { try { recognizer.stop(); } catch (e) {} }
+    if (micBtn) {
+      micBtn.classList.remove('listening');
+      micBtn.innerHTML = micLabel();
+    }
+  }
+
+  /* ---------- flujo ---------- */
+
+  function enterQuiz() {
+    document.getElementById('screen-start').classList.add('hidden');
+    document.getElementById('screen-quiz').classList.remove('hidden');
+    document.getElementById('topbar').classList.remove('hidden');
+    document.getElementById('starStrip').classList.remove('hidden');
+  }
+
+  function startQuiz() {
+    clearProgress();
+    beep(440, 0.08, 0, 'sine'); beep(660, 0.14, 0.07, 'sine');
+    enterQuiz();
+    renderQuestion();
+  }
+
+  function renderQuestion() {
+    var q = questions[idx];
+    selection = q.type === 'chips-multi' ? [] : null;
+    document.getElementById('qTag').innerHTML = icons[q.icon] + '<span>' + q.tag + '</span>';
+    document.getElementById('qTitle').textContent = q.title;
+
+    var body = document.getElementById('qBody');
+    body.innerHTML = '';
+
+    if (q.type === 'text') {
+      var ta = document.createElement('textarea');
+      ta.placeholder = q.placeholder || '';
+      ta.id = 'answerInput';
+      body.appendChild(ta);
+
+      if (hasSpeechRecognition()) {
+        var micBtn = document.createElement('button');
+        micBtn.type = 'button';
+        micBtn.className = 'btn-audio';
+        micBtn.innerHTML = micLabel();
+        micBtn.onclick = function() { toggleListening(ta, micBtn); };
+        body.appendChild(micBtn);
+      } else {
+        var audioBtn = document.createElement('button');
+        audioBtn.type = 'button';
+        audioBtn.className = 'btn-audio';
+        audioBtn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg> Prefiero mandarlo por audio';
+        audioBtn.onclick = answerByAudio;
+        body.appendChild(audioBtn);
+      }
+    } else {
+      var grid = document.createElement('div');
+      grid.className = 'chip-grid';
+      q.options.forEach(function(opt) {
+        var chip = document.createElement('button');
+        chip.className = 'chip';
+        chip.type = 'button';
+        chip.textContent = opt;
+        chip.onclick = function() { toggleChip(chip, opt, q.type); };
+        grid.appendChild(chip);
+      });
+      body.appendChild(grid);
+
+      if (q.extra) {
+        var extra = document.createElement('textarea');
+        extra.className = 'extra-input';
+        extra.id = 'extraInput';
+        extra.placeholder = q.extra;
+        body.appendChild(extra);
+      }
+    }
+
+    updateTopbar();
+  }
+
+  function toggleChip(el, value, type) {
+    playTap();
+    if (type === 'chips-multi') {
+      var at = selection.indexOf(value);
+      if (at >= 0) { selection.splice(at, 1); el.classList.remove('selected'); }
+      else { selection.push(value); el.classList.add('selected'); }
+    } else {
+      document.querySelectorAll('.chip').forEach(function(c) { c.classList.remove('selected'); });
+      el.classList.add('selected');
+      selection = value;
+    }
+  }
+
+  function collectAnswer() {
+    var q = questions[idx];
+    if (q.type === 'text') {
+      var ta = document.getElementById('answerInput');
+      return ta ? ta.value.trim() : '';
+    }
+    var picked = q.type === 'chips-multi' ? selection.join(', ') : (selection || '');
+    var extraEl = document.getElementById('extraInput');
+    var extra = extraEl ? extraEl.value.trim() : '';
+    if (picked && extra) { return picked + ' — ' + extra; }
+    return picked || extra;
+  }
+
+  function record(value, ok) {
+    answers[idx] = { q: questions[idx].title, a: value, ok: ok };
+  }
+
+  function nextQuestion() {
+    var val = collectAnswer();
+    if (val) {
+      record(val, true);
+      litStar(idx);
+      celebrate();
+    } else {
+      record('(sin responder)', false);
+      playSkip();
+    }
+    advance();
+  }
+
+  function skipQuestion() {
+    record('(la pasó)', false);
+    playSkip();
+    advance();
+  }
+
+  function answerByAudio() {
+    var q = questions[idx];
+    var msg = '🎙️ Freund — te mando esto por audio:\n\n"' + q.title + '"';
+    window.open(waLink(msg), '_blank');
+    record('(respondido por audio en WhatsApp)', true);
+    litStar(idx);
+    celebrate();
+    advance();
+  }
+
+  function advance() {
+    if (listening) { stopListening(null); }
+    idx++;
+    saveProgress();
+    if (idx >= questions.length) { finishQuiz(); }
+    else { renderQuestion(); }
+  }
+
+  function celebrate() {
+    var xpFloat = document.getElementById('xpFloat');
+    xpFloat.textContent = piropos[Math.floor(Math.random() * piropos.length)];
+    xpFloat.classList.remove('show'); void xpFloat.offsetWidth; xpFloat.classList.add('show');
+
+    bumpStage();
+    updateStage();
+
+    rankIdx = Math.min(answeredCount(), ranks.length - 1);
+    paintRank(true);
+    showRankToast(ranks[rankIdx].grito);
+    playRankUp();
+  }
+
+  function paintRank(animate) {
+    var badge = document.getElementById('rankBadge');
+    badge.textContent = ranks[rankIdx].emoji + ' ' + ranks[rankIdx].badge;
+    if (animate) { badge.classList.remove('bump'); void badge.offsetWidth; badge.classList.add('bump'); }
+  }
+
+  function showRankToast(text) {
+    if (!text) return;
+    var toast = document.getElementById('rankToast');
+    toast.textContent = text;
+    toast.classList.add('show');
+    setTimeout(function() { toast.classList.remove('show'); }, 2600);
+  }
+
+  function updateTopbar() {
+    document.getElementById('progressFill').style.width = Math.round((idx / questions.length) * 100) + '%';
+    document.getElementById('progressCount').textContent = idx + '/' + questions.length;
+  }
+
+  function waLink(text) {
+    return 'https://wa.me/' + WA_DESTINO + '?text=' + encodeURIComponent(text);
+  }
+
+  function nombreActual() {
+    var el = document.getElementById('playerName');
+    var v = el ? el.value.trim() : '';
+    return v || 'Alguien del taller';
+  }
+
+  function resumenTexto() {
+    var text = '📋 FREUND — lo que contó ' + nombreActual() + '\n\n';
+    answers.forEach(function(item, i) {
+      text += (i + 1) + '. ' + item.q + '\n   → ' + item.a + '\n\n';
+    });
+    return text;
+  }
+
+  function onNameTyped() {
+    var text = resumenTexto();
+    document.getElementById('summaryBox').textContent = text;
+    document.getElementById('waLink').href = waLink(text);
+  }
+
+  function finishQuiz() {
+    clearProgress();
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('progressCount').textContent = questions.length + '/' + questions.length;
+    document.getElementById('screen-quiz').classList.add('hidden');
+    document.getElementById('screen-end').classList.remove('hidden');
+
+    var n = answeredCount();
+    var puesto = ranks[Math.min(n, ranks.length - 1)];
+    document.getElementById('endTitle').textContent =
+      n === questions.length ? '¡LAS DOCE, SIN AFLOJAR! 🏁' : '¡ORDEN CERRADA, CRACK! 🏁';
+    document.getElementById('finalRank').textContent =
+      puesto.emoji + ' ' + puesto.badge + ' · ' + n + ' de ' + questions.length + ' estrellitas Freund';
+
+    onNameTyped();
+    document.getElementById('endSub').textContent = 'Poné tu nombre arriba y tocá el botón verde: me llega todo por WhatsApp 👇';
+    setTimeout(flushSend, 9000);
+
+    playFinish();
+    updateStage();
+    bumpStage();
+    launchConfetti();
+  }
+
+  function flushSend() {
+    if (enviado) return;
+    enviado = true;
+    postToSheet(ranks[Math.min(answeredCount(), ranks.length - 1)].badge, resumenTexto());
+  }
+
+  function postToSheet(puestoName, resumen) {
+    var sub = document.getElementById('endSub');
+    if (!WEBAPP_URL || WEBAPP_URL === 'PEGAR_URL_ACA') { return; }
+    var payload = {
+      nombre: nombreActual(),
+      puesto: puestoName,
+      fecha: new Date().toISOString(),
+      preguntas: answers.map(function(item) { return item.q; }),
+      answers: answers.map(function(item) { return item.a; }),
+      resumen: resumen
+    };
+    fetch(WEBAPP_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    }).then(function() {
+      sub.textContent = 'Ya quedó guardado. Igual mandámelo por WhatsApp así lo tengo a mano 👇';
+    }).catch(function() {});
+  }
+
+  function copySummary() {
+    var text = document.getElementById('summaryBox').textContent;
+    var btn = document.getElementById('copyBtn');
+    flushSend();
+    function done() { btn.textContent = '¡Copiado!'; btn.classList.add('copied'); }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(function() { fallbackCopy(text, done); });
+    } else { fallbackCopy(text, done); }
+  }
+
+  function fallbackCopy(text, done) {
+    var ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); done(); } catch (e) {}
+    document.body.removeChild(ta);
+  }
+
+  function launchConfetti() {
+    var field = document.getElementById('confetti');
+    var colors = ['#e23b3b', '#0f1f42', '#ffc907', '#ffffff'];
+    for (var i = 0; i < 60; i++) {
+      var p = document.createElement('div');
+      p.className = 'confetti-piece';
+      var size = 6 + Math.random() * 6;
+      p.style.left = Math.random() * 100 + '%';
+      p.style.width = size + 'px';
+      p.style.height = size * 0.4 + 'px';
+      p.style.background = colors[Math.floor(Math.random() * colors.length)];
+      p.style.animationDuration = (2.2 + Math.random() * 1.6) + 's';
+      p.style.animationDelay = (Math.random() * 0.4) + 's';
+      field.appendChild(p);
+      (function(el) { setTimeout(function() { el.remove(); }, 4500); })(p);
+    }
+  }
+
+  buildLogoStars();
+  buildStarStrip();
+  updateStage();
+  offerResume();
+</script>
+</body>
+</html>
