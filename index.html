@@ -556,10 +556,13 @@
     margin-top: 8px;
   }
 
-  .levelup.out { animation: lvl-out .22s ease forwards; }
-  .levelup.out .levelup-card { animation: lvl-card-out .22s ease forwards; }
-  @keyframes lvl-out { to { opacity: 0; } }
-  @keyframes lvl-card-out { to { transform: scale(.92); opacity: 0; } }
+  .levelup.out { animation: lvl-out .2s ease forwards !important; }
+  .levelup.out .levelup-card { animation: lvl-card-out .2s ease forwards !important; }
+  @keyframes lvl-out { from { opacity: 1; } to { opacity: 0; } }
+  @keyframes lvl-card-out {
+    from { transform: scale(1); opacity: 1; }
+    to { transform: scale(.9); opacity: 0; }
+  }
 
   /* PANTALLA FINAL */
   h2 {
@@ -942,7 +945,7 @@
 
 <div class="confetti-field" id="confetti"></div>
 <div class="rank-toast" id="rankToast"></div>
-<div class="levelup" id="levelUp" aria-hidden="true" onclick="cerrarAscenso()">
+<div class="levelup" id="levelUp" aria-hidden="true">
   <div class="levelup-card">
     <div class="levelup-rays"></div>
     <div class="levelup-badge" id="levelUpEmoji">🔩</div>
@@ -1520,8 +1523,17 @@
     if (!placa.classList.contains('show') || placa.classList.contains('out')) { return; }
     clearTimeout(placaTimer);
     placa.classList.add('out');
-    setTimeout(function() { placa.classList.remove('show'); placa.classList.remove('out'); }, 220);
+    placaTimer = setTimeout(function() {
+      placa.classList.remove('show');
+      placa.classList.remove('out');
+    }, 200);
   }
+
+  (function() {
+    var placa = document.getElementById('levelUp');
+    placa.addEventListener('click', cerrarAscenso);
+    placa.addEventListener('touchstart', function(ev) { ev.preventDefault(); cerrarAscenso(); }, { passive: false });
+  })();
 
   function updateTopbar() {
     document.getElementById('progressFill').style.width = Math.round((idx / questions.length) * 100) + '%';
