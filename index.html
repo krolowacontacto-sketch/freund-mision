@@ -772,7 +772,7 @@
       </g>
     </svg>
   </div>
-  <p class="stage-caption" id="stageCaption">Entró abollado · lo dejás impecable respondiendo</p>
+  <p class="stage-caption hidden" id="stageCaption">En diagnóstico</p>
 
   <div class="star-strip" id="starStrip"></div>
 
@@ -994,7 +994,7 @@
     else if (p >= 0.66) { cap.textContent = 'Saliendo de la cabina · ' + Math.round(p * 100) + '% reparado'; }
     else if (p >= 0.33) { cap.textContent = 'En chapa · ' + Math.round(p * 100) + '% reparado'; }
     else if (p > 0) { cap.textContent = 'En diagnóstico · ' + Math.round(p * 100) + '% reparado'; }
-    else { cap.textContent = 'Entró abollado · lo dejás impecable respondiendo'; }
+    else { cap.textContent = 'Entró abollado'; }
   }
 
   function bumpStage() {
@@ -1171,6 +1171,7 @@
   function enterQuiz() {
     document.getElementById('screen-start').classList.add('hidden');
     document.getElementById('screen-quiz').classList.remove('hidden');
+    document.getElementById('stageCaption').classList.remove('hidden');
   }
 
   function startQuiz() {
