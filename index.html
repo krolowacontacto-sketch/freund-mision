@@ -471,11 +471,11 @@
     opacity: 0;
     background: radial-gradient(circle at 50% 46%, rgba(9,19,39,0.85), rgba(9,19,39,0.6) 52%, rgba(9,19,39,0) 78%);
   }
-  .levelup.show { animation: lvl-bg 2.3s ease forwards; }
+  .levelup.show { animation: lvl-bg 3.4s ease forwards; }
   @keyframes lvl-bg {
     0% { opacity: 0; }
-    10% { opacity: 1; }
-    74% { opacity: 1; }
+    7% { opacity: 1; }
+    85% { opacity: 1; }
     100% { opacity: 0; }
   }
   .levelup-card {
@@ -486,12 +486,12 @@
     text-align: center;
     padding: 0 22px;
   }
-  .levelup.show .levelup-card { animation: lvl-pop 2.3s cubic-bezier(.2,1.5,.35,1) forwards; }
+  .levelup.show .levelup-card { animation: lvl-pop 3.4s cubic-bezier(.2,1.5,.35,1) forwards; }
   @keyframes lvl-pop {
     0% { transform: scale(.3) rotate(-14deg); opacity: 0; }
-    15% { transform: scale(1.14) rotate(3deg); opacity: 1; }
-    25% { transform: scale(1) rotate(0); }
-    74% { transform: scale(1); opacity: 1; }
+    10% { transform: scale(1.14) rotate(3deg); opacity: 1; }
+    17% { transform: scale(1) rotate(0); }
+    85% { transform: scale(1); opacity: 1; }
     100% { transform: scale(1.05) translateY(-18px); opacity: 0; }
   }
   .levelup-rays {
