@@ -471,6 +471,7 @@
     opacity: 0;
     background: radial-gradient(circle at 50% 46%, rgba(9,19,39,0.85), rgba(9,19,39,0.6) 52%, rgba(9,19,39,0) 78%);
   }
+  .levelup.show { pointer-events: auto; cursor: pointer; }
   .levelup.show { animation: lvl-bg 3.4s ease forwards; }
   @keyframes lvl-bg {
     0% { opacity: 0; }
@@ -535,6 +536,15 @@
     margin-top: 2px;
     text-shadow: 0 3px 0 var(--rojo-dark), 0 10px 26px rgba(0,0,0,0.65);
   }
+  .levelup-hint {
+    position: relative;
+    font-family: 'Manrope', sans-serif;
+    font-size: 11.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    margin-top: 16px;
+  }
   .levelup-line {
     position: relative;
     font-family: 'Baloo 2', sans-serif;
@@ -545,6 +555,11 @@
     max-width: 290px;
     margin-top: 8px;
   }
+
+  .levelup.out { animation: lvl-out .22s ease forwards; }
+  .levelup.out .levelup-card { animation: lvl-card-out .22s ease forwards; }
+  @keyframes lvl-out { to { opacity: 0; } }
+  @keyframes lvl-card-out { to { transform: scale(.92); opacity: 0; } }
 
   /* PANTALLA FINAL */
   h2 {
@@ -927,13 +942,14 @@
 
 <div class="confetti-field" id="confetti"></div>
 <div class="rank-toast" id="rankToast"></div>
-<div class="levelup" id="levelUp" aria-hidden="true">
+<div class="levelup" id="levelUp" aria-hidden="true" onclick="cerrarAscenso()">
   <div class="levelup-card">
     <div class="levelup-rays"></div>
     <div class="levelup-badge" id="levelUpEmoji">🔩</div>
     <div class="levelup-kicker">Ascendiste a</div>
     <div class="levelup-name" id="levelUpName">AYUDANTE</div>
     <div class="levelup-line" id="levelUpLine"></div>
+    <div class="levelup-hint">tocá para seguir</div>
   </div>
 </div>
 
@@ -1051,6 +1067,7 @@
   var recognizer = null;
   var listening = false;
   var enviado = false;
+  var placaTimer = null;
 
   function answeredCount() {
     return answers.filter(function(item) { return item && item.ok; }).length;
@@ -1489,8 +1506,21 @@
     document.getElementById('levelUpEmoji').textContent = rango.emoji;
     document.getElementById('levelUpName').textContent = rango.titulo;
     document.getElementById('levelUpLine').textContent = rango.frase;
-    placa.classList.remove('show'); void placa.offsetWidth; placa.classList.add('show');
+    placa.classList.remove('show');
+    placa.classList.remove('out');
+    void placa.offsetWidth;
+    placa.classList.add('show');
+    clearTimeout(placaTimer);
+    placaTimer = setTimeout(function() { placa.classList.remove('show'); }, 3400);
     chispas();
+  }
+
+  function cerrarAscenso() {
+    var placa = document.getElementById('levelUp');
+    if (!placa.classList.contains('show') || placa.classList.contains('out')) { return; }
+    clearTimeout(placaTimer);
+    placa.classList.add('out');
+    setTimeout(function() { placa.classList.remove('show'); placa.classList.remove('out'); }, 220);
   }
 
   function updateTopbar() {
