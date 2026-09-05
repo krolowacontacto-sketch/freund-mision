@@ -216,21 +216,26 @@
     margin: 0 0 12px;
   }
   .lead strong { color: var(--ink); }
-  .chips-preview {
-    display: flex;
-    gap: 7px;
-    flex-wrap: wrap;
-    margin-bottom: 16px;
-  }
-  .mini-chip {
-    font-size: 11.5px;
-    font-weight: 700;
-    color: var(--acero);
+  .rules {
+    list-style: none;
+    margin: 0 0 16px;
+    padding: 12px 14px;
     background: var(--paper);
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-family: 'Baloo 2', sans-serif;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
   }
+  .rules li {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--muted);
+  }
+  .rules b { color: var(--acero); }
+  .rules .ico { font-size: 15px; line-height: 1.2; flex-shrink: 0; }
   .resume-box {
     background: #fffaf0;
     border: 2px solid var(--ambar);
@@ -378,6 +383,27 @@
     box-shadow: 0 4px 0 #08122b;
   }
   .btn-next:active { transform: translateY(3px); box-shadow: none; }
+  .btn-next.off { opacity: 0.4; box-shadow: 0 4px 0 #08122b; }
+  .btn-back {
+    flex-shrink: 0;
+    background: none;
+    border: 2px solid var(--line);
+    color: var(--muted);
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .btn-back:disabled { opacity: 0.3; cursor: default; }
+  .card.shake { animation: shake .4s ease; }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-7px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(3px); }
+  }
 
   .xp-float {
     position: absolute;
@@ -527,7 +553,7 @@
 </button>
 
 <div class="app">
-  <div class="topbar hidden" id="topbar">
+  <div class="topbar" id="topbar">
     <div class="rank-badge" id="rankBadge">🔧 APRENDIZ</div>
     <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
     <div class="progress-count" id="progressCount">0/12</div>
@@ -748,17 +774,18 @@
   </div>
   <p class="stage-caption" id="stageCaption">Entró abollado · lo dejás impecable respondiendo</p>
 
-  <div class="star-strip hidden" id="starStrip"></div>
+  <div class="star-strip" id="starStrip"></div>
 
   <!-- INICIO -->
   <div class="card" id="screen-start">
     <h1>¡Hola, crack del taller! 🔧</h1>
     <p class="lead">Ese auto de ahí arriba entró hecho percha. <strong>Vos lo vas a dejar impecable</strong> respondiendo las preguntas. Ninguna está mal: la que no sepas, la pasás y seguimos. Dos minutos y estamos.</p>
-    <div class="chips-preview">
-      <span class="mini-chip">⭐ Juntás las 12 estrellitas</span>
-      <span class="mini-chip">🏁 Ascendés en cada respuesta</span>
-      <span class="mini-chip">🎙️ Se puede hablar en vez de escribir</span>
-    </div>
+    <ul class="rules">
+      <li><span class="ico">⭐</span><span>Cada respuesta te da una <b>estrellita Freund</b> — son las 12 de ahí arriba.</span></li>
+      <li><span class="ico">🔧</span><span>Y le saca <b>una abolladura al auto</b>. Contestá las 12 y sale impecable.</span></li>
+      <li><span class="ico">🏁</span><span>Cada estrellita te <b>asciende de puesto</b>: arrancás de aprendiz y llegás a leyenda del taller.</span></li>
+      <li><span class="ico">🎙️</span><span>Si te da fiaca escribir, podés hablar.</span></li>
+    </ul>
     <div class="resume-box hidden" id="resumeBox">
       <p id="resumeText"></p>
       <div class="resume-actions">
@@ -776,8 +803,9 @@
     <h3 class="q-title" id="qTitle"></h3>
     <div class="q-body" id="qBody"></div>
     <div class="q-footer">
+      <button class="btn-back" id="btnBack" onclick="prevQuestion()" aria-label="Volver a la anterior">←</button>
       <button class="skip-link" onclick="skipQuestion()">esta no la sé, paso</button>
-      <button class="btn-next" onclick="nextQuestion()">Siguiente →</button>
+      <button class="btn-next" id="btnNext" onclick="nextQuestion()">Siguiente →</button>
     </div>
   </div>
 
@@ -988,6 +1016,11 @@
     if (el) { el.classList.add('got'); }
   }
 
+  function unlitStar(i) {
+    var el = document.getElementById('star' + i);
+    if (el) { el.classList.remove('got'); }
+  }
+
   /* ---------- guardado local: que no se pierda si cierra el navegador ---------- */
 
   function saveProgress() {
@@ -1138,8 +1171,6 @@
   function enterQuiz() {
     document.getElementById('screen-start').classList.add('hidden');
     document.getElementById('screen-quiz').classList.remove('hidden');
-    document.getElementById('topbar').classList.remove('hidden');
-    document.getElementById('starStrip').classList.remove('hidden');
   }
 
   function startQuiz() {
@@ -1151,7 +1182,9 @@
 
   function renderQuestion() {
     var q = questions[idx];
-    selection = q.type === 'chips-multi' ? [] : null;
+    var prev = answers[idx] && answers[idx].raw ? answers[idx].raw : null;
+    selection = q.type === 'chips-multi' ? (prev && prev.picked ? prev.picked.slice() : [])
+                                         : (prev && prev.picked ? prev.picked : null);
     document.getElementById('qTag').innerHTML = icons[q.icon] + '<span>' + q.tag + '</span>';
     document.getElementById('qTitle').textContent = q.title;
 
@@ -1162,6 +1195,8 @@
       var ta = document.createElement('textarea');
       ta.placeholder = q.placeholder || '';
       ta.id = 'answerInput';
+      ta.value = prev && prev.text ? prev.text : '';
+      ta.oninput = refreshNext;
       body.appendChild(ta);
 
       if (hasSpeechRecognition()) {
@@ -1187,6 +1222,9 @@
         chip.className = 'chip';
         chip.type = 'button';
         chip.textContent = opt;
+        if (q.type === 'chips-multi' ? selection.indexOf(opt) >= 0 : selection === opt) {
+          chip.classList.add('selected');
+        }
         chip.onclick = function() { toggleChip(chip, opt, q.type); };
         grid.appendChild(chip);
       });
@@ -1197,10 +1235,14 @@
         extra.className = 'extra-input';
         extra.id = 'extraInput';
         extra.placeholder = q.extra;
+        extra.value = prev && prev.extra ? prev.extra : '';
+        extra.oninput = refreshNext;
         body.appendChild(extra);
       }
     }
 
+    document.getElementById('btnBack').disabled = idx === 0;
+    refreshNext();
     updateTopbar();
   }
 
@@ -1215,49 +1257,78 @@
       el.classList.add('selected');
       selection = value;
     }
+    refreshNext();
   }
 
-  function collectAnswer() {
+  function collectRaw() {
     var q = questions[idx];
     if (q.type === 'text') {
       var ta = document.getElementById('answerInput');
-      return ta ? ta.value.trim() : '';
+      return { text: ta ? ta.value.trim() : '' };
     }
-    var picked = q.type === 'chips-multi' ? selection.join(', ') : (selection || '');
     var extraEl = document.getElementById('extraInput');
-    var extra = extraEl ? extraEl.value.trim() : '';
-    if (picked && extra) { return picked + ' — ' + extra; }
-    return picked || extra;
+    return {
+      picked: q.type === 'chips-multi' ? selection.slice() : (selection || ''),
+      extra: extraEl ? extraEl.value.trim() : ''
+    };
   }
 
-  function record(value, ok) {
-    answers[idx] = { q: questions[idx].title, a: value, ok: ok };
+  function textoDe(raw, q) {
+    if (q.type === 'text') { return raw.text; }
+    var picked = q.type === 'chips-multi' ? raw.picked.join(', ') : raw.picked;
+    if (picked && raw.extra) { return picked + ' — ' + raw.extra; }
+    return picked || raw.extra;
+  }
+
+  function refreshNext() {
+    var btn = document.getElementById('btnNext');
+    if (btn) { btn.classList.toggle('off', !textoDe(collectRaw(), questions[idx])); }
+  }
+
+  function record(value, ok, raw) {
+    answers[idx] = { q: questions[idx].title, a: value, ok: ok, raw: raw };
   }
 
   function nextQuestion() {
-    var val = collectAnswer();
-    if (val) {
-      record(val, true);
-      litStar(idx);
-      celebrate();
-    } else {
-      record('(sin responder)', false);
-      playSkip();
-    }
+    var raw = collectRaw();
+    var val = textoDe(raw, questions[idx]);
+    if (!val) { avisoVacio(); return; }
+    record(val, true, raw);
+    litStar(idx);
+    celebrate();
     advance();
   }
 
-  function skipQuestion() {
-    record('(la pasó)', false);
+  function avisoVacio() {
+    var card = document.getElementById('screen-quiz');
+    card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+    showRankToast('Escribí algo, o tocá "esta no la sé, paso" si no la sabés 👇');
     playSkip();
+    var ta = document.getElementById('answerInput');
+    if (ta) { ta.focus(); }
+  }
+
+  function skipQuestion() {
+    record('(la pasó)', false, collectRaw());
+    unlitStar(idx);
+    playSkip();
+    updateStage();
     advance();
+  }
+
+  function prevQuestion() {
+    if (idx === 0) { return; }
+    if (listening) { stopListening(null); }
+    idx--;
+    saveProgress();
+    renderQuestion();
   }
 
   function answerByAudio() {
     var q = questions[idx];
     var msg = '🎙️ Freund — te mando esto por audio:\n\n"' + q.title + '"';
     window.open(waLink(msg), '_blank');
-    record('(respondido por audio en WhatsApp)', true);
+    record('(respondido por audio en WhatsApp)', true, collectRaw());
     litStar(idx);
     celebrate();
     advance();
@@ -1279,7 +1350,7 @@
     bumpStage();
     updateStage();
 
-    rankIdx = Math.min(answeredCount(), ranks.length - 1);
+    rankIdx = Math.max(rankIdx, Math.min(answeredCount(), ranks.length - 1));
     paintRank(true);
     showRankToast(ranks[rankIdx].grito);
     playRankUp();
@@ -1336,7 +1407,7 @@
     document.getElementById('screen-end').classList.remove('hidden');
 
     var n = answeredCount();
-    var puesto = ranks[Math.min(n, ranks.length - 1)];
+    var puesto = ranks[Math.max(rankIdx, Math.min(n, ranks.length - 1))];
     document.getElementById('endTitle').textContent =
       n === questions.length ? '¡LAS DOCE, SIN AFLOJAR! 🏁' : '¡ORDEN CERRADA, CRACK! 🏁';
     document.getElementById('finalRank').textContent =
