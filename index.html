@@ -459,6 +459,93 @@
   }
   .rank-toast.show { transform: translate(-50%, 0); opacity: 1; }
 
+  /* placa de ascenso: ocupa el centro de la pantalla */
+  .levelup {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(circle at 50% 46%, rgba(9,19,39,0.85), rgba(9,19,39,0.6) 52%, rgba(9,19,39,0) 78%);
+  }
+  .levelup.show { animation: lvl-bg 2.3s ease forwards; }
+  @keyframes lvl-bg {
+    0% { opacity: 0; }
+    10% { opacity: 1; }
+    74% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  .levelup-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0 22px;
+  }
+  .levelup.show .levelup-card { animation: lvl-pop 2.3s cubic-bezier(.2,1.5,.35,1) forwards; }
+  @keyframes lvl-pop {
+    0% { transform: scale(.3) rotate(-14deg); opacity: 0; }
+    15% { transform: scale(1.14) rotate(3deg); opacity: 1; }
+    25% { transform: scale(1) rotate(0); }
+    74% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.05) translateY(-18px); opacity: 0; }
+  }
+  .levelup-rays {
+    position: absolute;
+    top: 46px; left: 50%;
+    width: 300px; height: 300px;
+    margin: -150px 0 0 -150px;
+    background: repeating-conic-gradient(from 0deg, rgba(255,201,7,0.40) 0deg 5deg, transparent 5deg 17deg);
+    -webkit-mask: radial-gradient(circle, #000 10%, rgba(0,0,0,0.45) 32%, transparent 60%);
+    mask: radial-gradient(circle, #000 10%, rgba(0,0,0,0.45) 32%, transparent 60%);
+    pointer-events: none;
+  }
+  .levelup.show .levelup-rays { animation: spin 8s linear infinite; }
+  .levelup-badge {
+    position: relative;
+    width: 92px; height: 92px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #ffe789, var(--ambar) 55%, #d79a00);
+    border: 4px solid #fff6cf;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.55), 0 0 0 7px rgba(255,201,7,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 44px;
+    line-height: 1;
+  }
+  .levelup-kicker {
+    position: relative;
+    font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ambar);
+    margin-top: 14px;
+  }
+  .levelup-name {
+    position: relative;
+    font-family: 'Bungee', Impact, sans-serif;
+    font-size: clamp(23px, 7.6vw, 33px);
+    line-height: 1.08;
+    color: #fff;
+    margin-top: 2px;
+    text-shadow: 0 3px 0 var(--rojo-dark), 0 10px 26px rgba(0,0,0,0.65);
+  }
+  .levelup-line {
+    position: relative;
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 1.35;
+    color: #dbe3f5;
+    max-width: 290px;
+    margin-top: 8px;
+  }
+
   /* PANTALLA FINAL */
   h2 {
     font-family: 'Bungee', Impact, sans-serif;
@@ -840,6 +927,15 @@
 
 <div class="confetti-field" id="confetti"></div>
 <div class="rank-toast" id="rankToast"></div>
+<div class="levelup" id="levelUp" aria-hidden="true">
+  <div class="levelup-card">
+    <div class="levelup-rays"></div>
+    <div class="levelup-badge" id="levelUpEmoji">🔩</div>
+    <div class="levelup-kicker">Ascendiste a</div>
+    <div class="levelup-name" id="levelUpName">AYUDANTE</div>
+    <div class="levelup-line" id="levelUpLine"></div>
+  </div>
+</div>
 
 <script>
   // Número al que llega el resumen por WhatsApp, formato internacional sin + ni espacios
@@ -925,19 +1021,19 @@
 
   // Un ascenso por cada respuesta: la idea es que suba de puesto todo el tiempo.
   var ranks = [
-    { badge:'APRENDIZ',      emoji:'🔧', grito:'' },
-    { badge:'AYUDANTE',      emoji:'🔩', grito:'¡Ascendiste a AYUDANTE! Ya te dejan tocar las herramientas.' },
-    { badge:'MEDIO OFICIAL', emoji:'🪛', grito:'¡MEDIO OFICIAL! Ya no te mandan a comprar las facturas.' },
-    { badge:'CHAPISTA',      emoji:'🔨', grito:'¡CHAPISTA! Sacás una abolladura sin pensarlo dos veces.' },
-    { badge:'CHAPISTA+',     emoji:'⚒️', grito:'¡CHAPISTA MAYOR! El martillo te obedece.' },
-    { badge:'SOLDADOR',      emoji:'⚡', grito:'¡SOLDADOR! Tirás un punto y queda invisible.' },
-    { badge:'PINTOR',        emoji:'🎨', grito:'¡PINTOR! Te dejaron entrar solo a la cabina.' },
-    { badge:'COLORISTA',     emoji:'🖌️', grito:'¡COLORISTA! Cazás el color a ojo. Impresionante.' },
-    { badge:'PULIDOR',       emoji:'✨', grito:'¡PULIDOR! Dejás una chapa donde te ves la cara.' },
-    { badge:'OFICIAL',       emoji:'🏅', grito:'¡OFICIAL DE CONFIANZA! Te dieron las llaves del taller.' },
-    { badge:'JEFE',          emoji:'🏆', grito:'¡JEFE DE TALLER! Ahora las OT las repartís vos.' },
-    { badge:'MAESTRO',       emoji:'🏁', grito:'¡MAESTRO! Los pibes te miran trabajar para aprender.' },
-    { badge:'LEYENDA',       emoji:'👑', grito:'¡LEYENDA DE OLIVOS! Van a poner una placa con tu nombre en Mariano Pelliza.' }
+    { badge:'APRENDIZ',      titulo:'APRENDIZ',            emoji:'🔧', frase:'' },
+    { badge:'AYUDANTE',      titulo:'AYUDANTE',            emoji:'🔩', frase:'Ya te dejan tocar las herramientas.' },
+    { badge:'MEDIO OFICIAL', titulo:'MEDIO OFICIAL',       emoji:'🪛', frase:'Ya no te mandan a comprar las facturas.' },
+    { badge:'CHAPISTA',      titulo:'CHAPISTA',            emoji:'🔨', frase:'Sacás una abolladura sin pensarlo dos veces.' },
+    { badge:'CHAPISTA+',     titulo:'CHAPISTA MAYOR',      emoji:'⚒️', frase:'El martillo te obedece.' },
+    { badge:'SOLDADOR',      titulo:'SOLDADOR',            emoji:'⚡', frase:'Tirás un punto y queda invisible.' },
+    { badge:'PINTOR',        titulo:'PINTOR',              emoji:'🎨', frase:'Te dejaron entrar solo a la cabina.' },
+    { badge:'COLORISTA',     titulo:'COLORISTA',           emoji:'🖌️', frase:'Cazás el color a ojo. Impresionante.' },
+    { badge:'PULIDOR',       titulo:'PULIDOR',             emoji:'✨', frase:'Dejás una chapa donde te ves la cara.' },
+    { badge:'OFICIAL',       titulo:'OFICIAL DE CONFIANZA',emoji:'🏅', frase:'Te dieron las llaves del taller.' },
+    { badge:'JEFE',          titulo:'JEFE DE TALLER',      emoji:'🏆', frase:'Ahora las OT las repartís vos.' },
+    { badge:'MAESTRO',       titulo:'MAESTRO',             emoji:'🏁', frase:'Los pibes te miran trabajar para aprender.' },
+    { badge:'LEYENDA',       titulo:'LEYENDA DE OLIVOS',   emoji:'👑', frase:'Van a poner una placa con tu nombre en Mariano Pelliza.' }
   ];
 
   var piropos = ['⭐ +1', '¡ESO!', '¡CRACK!', '¡TREMENDO!', '¡GENIO!', '¡FIERA!', '¡ORO PURO!'];
@@ -1113,7 +1209,7 @@
 
   function playTap() { beep(560, 0.07, 0, 'square'); }
   function playSkip() { beep(300, 0.09, 0, 'sine'); beep(220, 0.1, 0.06, 'sine'); }
-  function playRankUp() { beep(523, 0.08, 0, 'triangle'); beep(659, 0.08, 0.07, 'triangle'); beep(880, 0.2, 0.14, 'triangle'); }
+  function playRankUp() { beep(523, 0.07, 0, 'triangle'); beep(659, 0.07, 0.06, 'triangle'); beep(784, 0.07, 0.12, 'triangle'); beep(1046, 0.26, 0.19, 'triangle'); beep(1318, 0.3, 0.3, 'sine'); }
   function playFinish() { beep(523, 0.1, 0, 'sine'); beep(659, 0.1, 0.09, 'sine'); beep(784, 0.1, 0.18, 'sine'); beep(1046, 0.32, 0.27, 'sine'); }
 
   function toggleMute() {
@@ -1316,7 +1412,7 @@
   function avisoVacio() {
     var card = document.getElementById('screen-quiz');
     card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
-    showRankToast('Escribí algo, o tocá "esta no la sé, paso" si no la sabés 👇');
+    showAviso('Escribí algo, o tocá "esta no la sé, paso" si no la sabés 👇');
     playSkip();
     var ta = document.getElementById('answerInput');
     if (ta) { ta.focus(); }
@@ -1364,10 +1460,15 @@
     bumpStage();
     updateStage();
 
-    rankIdx = Math.max(rankIdx, Math.min(answeredCount(), ranks.length - 1));
-    paintRank(true);
-    showRankToast(ranks[rankIdx].grito);
-    playRankUp();
+    var nuevo = Math.max(rankIdx, Math.min(answeredCount(), ranks.length - 1));
+    if (nuevo !== rankIdx) {
+      rankIdx = nuevo;
+      paintRank(true);
+      showAscenso(ranks[rankIdx]);
+      playRankUp();
+    } else {
+      playTap();
+    }
   }
 
   function paintRank(animate) {
@@ -1376,12 +1477,20 @@
     if (animate) { badge.classList.remove('bump'); void badge.offsetWidth; badge.classList.add('bump'); }
   }
 
-  function showRankToast(text) {
-    if (!text) return;
+  function showAviso(text) {
     var toast = document.getElementById('rankToast');
     toast.textContent = text;
     toast.classList.add('show');
     setTimeout(function() { toast.classList.remove('show'); }, 2600);
+  }
+
+  function showAscenso(rango) {
+    var placa = document.getElementById('levelUp');
+    document.getElementById('levelUpEmoji').textContent = rango.emoji;
+    document.getElementById('levelUpName').textContent = rango.titulo;
+    document.getElementById('levelUpLine').textContent = rango.frase;
+    placa.classList.remove('show'); void placa.offsetWidth; placa.classList.add('show');
+    chispas();
   }
 
   function updateTopbar() {
@@ -1481,10 +1590,14 @@
     document.body.removeChild(ta);
   }
 
-  function launchConfetti() {
+  function chispas() {
+    launchConfetti(24, ['#ffc907', '#fff3c4', '#ffffff']);
+  }
+
+  function launchConfetti(cantidad, colores) {
     var field = document.getElementById('confetti');
-    var colors = ['#e23b3b', '#0f1f42', '#ffc907', '#ffffff'];
-    for (var i = 0; i < 60; i++) {
+    var colors = colores || ['#e23b3b', '#0f1f42', '#ffc907', '#ffffff'];
+    for (var i = 0; i < (cantidad || 60); i++) {
       var p = document.createElement('div');
       p.className = 'confetti-piece';
       var size = 6 + Math.random() * 6;
