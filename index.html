@@ -1264,6 +1264,7 @@
 
     var base = textareaEl.value ? (textareaEl.value.trim() + ' ') : '';
     var finales = [];
+    var reaperturas = 0;
 
     // Cada tramo se guarda en SU posicion, nunca se suma al texto anterior:
     // el navegador reenvia lo mismo varias veces mientras corrige.
@@ -1283,13 +1284,28 @@
     };
 
     recognizer.onerror = function(ev) {
-      if (ev && ev.error === 'no-speech') { return; }
+      var err = ev && ev.error;
+      if (err === 'no-speech' || err === 'aborted') { return; }
+      if (err === 'not-allowed' || err === 'service-not-allowed') {
+        showAviso('El navegador no me deja usar el micrófono. Revisá los permisos del sitio.');
+      }
+      reaperturas = 99;
       stopListening(micBtn);
     };
 
-    // Cuando el telefono corta el dictado, se termina. Reanudarlo hace que
-    // Android vuelva a dictar lo anterior y se duplique todo.
-    recognizer.onend = function() { stopListening(micBtn); };
+    // El telefono corta el microfono a los pocos segundos. Si todavia no
+    // dicto nada lo reabrimos (no hay nada que se pueda duplicar); si ya
+    // dicto algo cortamos, porque al reanudar Android reenvia lo anterior.
+    recognizer.onend = function() {
+      if (!listening) { return; }
+      var yaDicto = false;
+      for (var i = 0; i < finales.length; i++) {
+        if (finales[i]) { yaDicto = true; break; }
+      }
+      if (yaDicto || reaperturas >= 10) { stopListening(micBtn); return; }
+      reaperturas++;
+      try { recognizer.start(); } catch (e) { stopListening(micBtn); }
+    };
 
     try {
       recognizer.start();
