@@ -1263,17 +1263,26 @@
     var baseText = textareaEl.value ? (textareaEl.value.trim() + ' ') : '';
 
     recognizer.onresult = function(event) {
-      var interim = '', final = '';
-      for (var i = event.resultIndex; i < event.results.length; i++) {
-        var transcript = event.results[i][0].transcript;
-        if (event.results[i].isFinal) { final += transcript + ' '; }
-        else { interim += transcript; }
+      var partes = [];
+      for (var i = 0; i < event.results.length; i++) {
+        var t = event.results[i][0].transcript.trim();
+        if (t) { partes.push(t); }
       }
-      if (final) { baseText += final; }
-      textareaEl.value = baseText + interim;
+      textareaEl.value = (baseText + partes.join(' ')).trim();
     };
-    recognizer.onerror = function() { stopListening(micBtn); };
-    recognizer.onend = function() { if (listening) { stopListening(micBtn); } };
+
+    recognizer.onerror = function(ev) {
+      if (ev && ev.error === 'no-speech') { return; }
+      stopListening(micBtn);
+    };
+
+    // En el celular el reconocedor se corta solo tras un silencio: lo
+    // reanudamos fijando lo dictado hasta ahora, para no perder ni repetir.
+    recognizer.onend = function() {
+      if (!listening) { return; }
+      baseText = textareaEl.value ? (textareaEl.value.trim() + ' ') : '';
+      try { recognizer.start(); } catch (e) { stopListening(micBtn); }
+    };
 
     try {
       recognizer.start();
