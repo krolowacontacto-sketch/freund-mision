@@ -1248,7 +1248,9 @@
   }
 
   function micLabel() {
-    return '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg> Hablar en vez de escribir';
+    var ta = document.getElementById('answerInput');
+    var texto = ta && ta.value.trim() ? 'Seguir dictando' : 'Hablar en vez de escribir';
+    return '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg> ' + texto;
   }
 
   function toggleListening(textareaEl, micBtn) {
@@ -1260,15 +1262,24 @@
     recognizer.continuous = true;
     recognizer.interimResults = true;
 
-    var baseText = textareaEl.value ? (textareaEl.value.trim() + ' ') : '';
+    var base = textareaEl.value ? (textareaEl.value.trim() + ' ') : '';
+    var finales = [];
 
+    // Cada tramo se guarda en SU posicion, nunca se suma al texto anterior:
+    // el navegador reenvia lo mismo varias veces mientras corrige.
     recognizer.onresult = function(event) {
-      var partes = [];
+      var enCurso = '';
       for (var i = 0; i < event.results.length; i++) {
-        var t = event.results[i][0].transcript.trim();
-        if (t) { partes.push(t); }
+        var r = event.results[i];
+        if (r.isFinal) { finales[i] = r[0].transcript.trim(); }
+        else { enCurso = r[0].transcript.trim(); }
       }
-      textareaEl.value = (baseText + partes.join(' ')).trim();
+      var dicho = [];
+      for (var k = 0; k < finales.length; k++) {
+        if (finales[k]) { dicho.push(finales[k]); }
+      }
+      if (enCurso) { dicho.push(enCurso); }
+      textareaEl.value = (base + dicho.join(' ')).trim();
     };
 
     recognizer.onerror = function(ev) {
@@ -1276,13 +1287,9 @@
       stopListening(micBtn);
     };
 
-    // En el celular el reconocedor se corta solo tras un silencio: lo
-    // reanudamos fijando lo dictado hasta ahora, para no perder ni repetir.
-    recognizer.onend = function() {
-      if (!listening) { return; }
-      baseText = textareaEl.value ? (textareaEl.value.trim() + ' ') : '';
-      try { recognizer.start(); } catch (e) { stopListening(micBtn); }
-    };
+    // Cuando el telefono corta el dictado, se termina. Reanudarlo hace que
+    // Android vuelva a dictar lo anterior y se duplique todo.
+    recognizer.onend = function() { stopListening(micBtn); };
 
     try {
       recognizer.start();
@@ -1301,6 +1308,7 @@
     if (micBtn) {
       micBtn.classList.remove('listening');
       micBtn.innerHTML = micLabel();
+      refreshNext();
     }
   }
 
