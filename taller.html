@@ -62,13 +62,18 @@
     box-shadow: 0 2px 14px rgba(0,0,0,0.25);
   }
   .brand {
-    font-family: 'Bungee', Impact, sans-serif;
-    color: #fff;
-    font-size: 20px;
-    letter-spacing: 0.03em;
+    display: flex;
+    align-items: center;
     text-decoration: none;
+    background: #000;
+    border: 1px solid rgba(255,201,7,0.35);
+    border-radius: 8px;
+    padding: 6px 12px;
   }
-  .brand span { color: var(--ambar); }
+  .brand img { height: 26px; width: auto; display: block; }
+  @media (min-width: 480px) {
+    .brand img { height: 32px; }
+  }
   .btn-wa-header {
     display: flex;
     align-items: center;
@@ -199,6 +204,20 @@
     .about-grid { grid-template-columns: 0.9fr 1.1fr; }
   }
   .about-grid img { border-radius: 16px; box-shadow: 0 16px 40px -14px rgba(15,31,66,0.35); }
+  .about-photo { position: relative; }
+  .about-photo img.about-seal {
+    position: absolute;
+    bottom: -22px;
+    right: -18px;
+    width: 116px;
+    border-radius: 8px;
+    border: 4px solid #fff;
+    box-shadow: 0 10px 26px rgba(15,31,66,0.4);
+    transform: rotate(6deg);
+  }
+  @media (min-width: 480px) {
+    .about-photo img.about-seal { width: 140px; bottom: -26px; right: -22px; }
+  }
   .about p { font-size: 15.5px; line-height: 1.7; color: var(--muted); margin: 0 0 12px; }
   .about strong { color: var(--ink); }
   .stat-row { display: flex; gap: 22px; margin-top: 20px; flex-wrap: wrap; }
@@ -232,8 +251,16 @@
     overflow: hidden;
     box-shadow: 0 14px 34px -18px rgba(15,31,66,0.35);
     border: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
   }
-  .service-card img { height: 190px; object-fit: cover; width: 100%; }
+  .service-card img { width: 100%; object-fit: cover; display: block; }
+  .service-card.card-tall img { aspect-ratio: 3 / 4; }
+  .service-card.card-wide img { aspect-ratio: 4 / 3; }
+  .service-card.card-med img { aspect-ratio: 5 / 6; }
+  @media (min-width: 700px) {
+    .service-card.card-offset { transform: translateY(-22px); }
+  }
   .service-body { padding: 18px; }
   .service-body h3 {
     font-family: 'Baloo 2', sans-serif;
@@ -274,20 +301,24 @@
   .gallery-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 130px;
+    grid-auto-flow: dense;
     gap: 10px;
   }
   @media (min-width: 700px) {
-    .gallery-grid { grid-template-columns: repeat(4, 1fr); }
+    .gallery-grid { grid-template-columns: repeat(4, 1fr); grid-auto-rows: 130px; gap: 12px; }
   }
   .gallery-grid img {
     width: 100%;
-    height: 160px;
+    height: 100%;
     object-fit: cover;
-    border-radius: 10px;
+    border-radius: 12px;
+    display: block;
   }
-  @media (min-width: 700px) {
-    .gallery-grid img { height: 190px; }
-  }
+  .g-wide { grid-column: span 2; grid-row: span 1; }
+  .g-tall { grid-column: span 1; grid-row: span 2; }
+  .g-big  { grid-column: span 2; grid-row: span 2; }
+  .g-sq   { grid-column: span 1; grid-row: span 1; }
 
   /* contact */
   .contact { background: var(--paper); }
@@ -356,7 +387,7 @@
 <body>
 
 <header>
-  <a class="brand" href="#top">FRE<span>U</span>ND</a>
+  <a class="brand" href="#top"><img src="img/taller/logo-wordmark.jpg" alt="Freund S.R.L."></a>
   <a class="btn-wa-header js-wa" href="#" data-msg="Hola! Vengo de la web de Freund" target="_blank" rel="noopener">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="#fff"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.3L2 22l4.9-1.3C8.4 21.5 10.2 22 12 22c5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18.2c-1.6 0-3.1-.4-4.5-1.2l-.3-.2-3 .8.8-2.9-.2-.3C4 15 3.3 13.5 3.3 12 3.3 7.2 7.2 3.3 12 3.3S20.7 7.2 20.7 12 16.8 20.2 12 20.2zm5.1-6.2c-.3-.1-1.6-.8-1.9-.9-.2-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1-1.5-.7-2.5-1.3-3.5-3-.3-.5.3-.5.7-1.6.1-.2 0-.3 0-.5-.1-.1-.6-1.4-.8-1.9-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9 1-.9 2.3s1 2.7 1.1 2.9c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>
     WhatsApp
@@ -381,7 +412,10 @@
 
 <section class="about">
   <div class="section-inner about-grid">
-    <img src="img/taller/historia.jpg" alt="Cartel histórico de Freund, taller integral desde 2010">
+    <div class="about-photo">
+      <img src="img/taller/historia.jpg" alt="Cartel histórico de Freund, taller integral desde 2010">
+      <img class="about-seal" src="img/taller/badge-vintage.jpg" alt="Sello Freund, taller integral desde 2010">
+    </div>
     <div>
       <p class="eyebrow">Quiénes somos</p>
       <h2>Un taller de barrio con estándar de agencia</h2>
@@ -403,21 +437,21 @@
     <p class="eyebrow">Qué hacemos</p>
     <h2>Servicios</h2>
     <div class="services-grid">
-      <div class="service-card">
-        <img src="img/taller/chapa-estiramiento.jpg" alt="Área de estiramiento de carrocería en Freund">
+      <div class="service-card card-tall">
+        <img style="object-position: top;" src="img/taller/chapa-estiramiento.jpg" alt="Área de estiramiento de carrocería en Freund">
         <div class="service-body">
           <h3>Chapa y carrocería</h3>
           <p>Reparación de carrocería y área de estiramiento (bancada) para devolverle la estructura original al auto después de un golpe.</p>
         </div>
       </div>
-      <div class="service-card">
+      <div class="service-card card-wide card-offset">
         <img src="img/taller/cabina-pintura.jpg" alt="Cabina de pintura de Freund">
         <div class="service-body">
           <h3>Pintura al horno</h3>
           <p>Cabina de pintura propia y sistema <strong>Glasurit</strong> (Alemania), con laboratorio de color para igualar el tono exacto de fábrica.</p>
         </div>
       </div>
-      <div class="service-card">
+      <div class="service-card card-med">
         <img src="img/taller/mecanica-elevadores.jpg" alt="Elevadores de mecánica en Freund">
         <div class="service-body">
           <h3>Mecánica general</h3>
@@ -470,12 +504,12 @@
     <p class="eyebrow">Así se ve el taller</p>
     <h2>Galería</h2>
     <div class="gallery-grid">
-      <img src="img/taller/vista-general.jpg" alt="Vista general del taller Freund">
-      <img src="img/taller/pintura-prep.jpg" alt="Auto preparado para pintura en Freund">
-      <img src="img/taller/laboratorio-color.jpg" alt="Laboratorio de color, estantería de pinturas Glasurit">
-      <img src="img/taller/carroceria.jpg" alt="Zona de reparación de carrocería">
-      <img src="img/taller/recepcion.jpg" alt="Recepción del taller Freund">
-      <img src="img/taller/logo-taller.jpg" alt="Cartel de Freund, carrocería pintura y mecánica">
+      <img class="g-big" src="img/taller/vista-general.jpg" alt="Vista general del taller Freund">
+      <img class="g-tall" src="img/taller/carroceria.jpg" alt="Zona de reparación de carrocería">
+      <img class="g-tall" src="img/taller/pintura-prep.jpg" alt="Auto preparado para pintura en Freund">
+      <img class="g-wide" src="img/taller/recepcion.jpg" alt="Recepción del taller Freund">
+      <img class="g-sq" src="img/taller/entrada-laboratorio.jpg" alt="Entrada al laboratorio de color de Freund">
+      <img class="g-sq" src="img/taller/laboratorio-color.jpg" alt="Laboratorio de color, estantería de pinturas Glasurit">
     </div>
   </div>
 </section>
