@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Freund · Carrocería, Pintura y Mecánica</title>
+<meta name="theme-color" content="#0f1f42">
+<meta name="description" content="Freund — taller integral de chapa, pintura y mecánica desde 2010. Pintura importada Glasurit con laboratorio de color propio.">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="FREUND">
+<meta property="og:locale" content="es_AR">
+<meta property="og:title" content="Freund · Carrocería, Pintura y Mecánica">
+<meta property="og:description" content="Taller integral de chapa, pintura y mecánica desde 2010. Pintura importada Glasurit con laboratorio de color propio.">
+<meta property="og:image" content="img/taller/hero.jpg">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;700&family=Baloo+2:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    --acero: #0f1f42;
+    --acero-2: #16264d;
+    --rojo: #e23b3b;
+    --rojo-dark: #b82424;
+    --ambar: #ffc907;
+    --ambar-dark: #c98f02;
+    --paper: #eef1f7;
+    --ink: #131a2a;
+    --muted: #59627a;
+    --line: #d9dfec;
+    --verde: #25D366;
+    --verde-dark: #1aa851;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    color: var(--ink);
+    font-family: 'Manrope', system-ui, sans-serif;
+    background: #fff;
+  }
+  img { max-width: 100%; display: block; }
+  .todo {
+    background: repeating-linear-gradient(45deg, #fff3cd 0 10px, #ffe9a8 10px 20px);
+    color: #6b4c00;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+
+  /* ---------- header ---------- */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 18px;
+    background: var(--acero);
+    box-shadow: 0 2px 14px rgba(0,0,0,0.25);
+  }
+  .brand {
+    font-family: 'Bungee', Impact, sans-serif;
+    color: #fff;
+    font-size: 20px;
+    letter-spacing: 0.03em;
+    text-decoration: none;
+  }
+  .brand span { color: var(--ambar); }
+  .btn-wa-header {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--verde);
+    color: #fff;
+    text-decoration: none;
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: 13.5px;
+    padding: 9px 14px;
+    border-radius: 9px;
+    box-shadow: 0 3px 0 var(--verde-dark);
+    white-space: nowrap;
+  }
+
+  /* ---------- hero ---------- */
+  .hero {
+    position: relative;
+    min-height: 78vh;
+    display: flex;
+    align-items: flex-end;
+    background: #0b1730 url('img/taller/hero.jpg') center 20% / cover no-repeat;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgba(9,15,32,0.94) 0%, rgba(9,15,32,0.55) 45%, rgba(9,15,32,0.25) 100%);
+  }
+  .hero-inner {
+    position: relative;
+    max-width: 900px;
+    padding: 32px 20px 44px;
+  }
+  .hero-kicker {
+    font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ambar);
+    margin: 0 0 10px;
+  }
+  .hero h1 {
+    font-family: 'Bungee', Impact, sans-serif;
+    font-weight: 400;
+    font-size: clamp(28px, 6.5vw, 48px);
+    line-height: 1.15;
+    color: #fff;
+    margin: 0 0 14px;
+    text-wrap: balance;
+  }
+  .hero p {
+    font-size: clamp(15px, 2.6vw, 18px);
+    line-height: 1.6;
+    color: #dbe3f5;
+    max-width: 560px;
+    margin: 0 0 24px;
+  }
+  .hero-ctas { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--verde);
+    color: #fff;
+    text-decoration: none;
+    padding: 15px 22px;
+    border-radius: 12px;
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    box-shadow: 0 5px 0 var(--verde-dark);
+  }
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    text-decoration: none;
+    padding: 15px 22px;
+    border-radius: 12px;
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    border: 2px solid rgba(255,255,255,0.35);
+  }
+
+  /* ---------- hazard divider ---------- */
+  .hazard {
+    height: 9px;
+    background: repeating-linear-gradient(45deg, var(--ambar) 0 12px, var(--acero) 12px 24px);
+  }
+
+  /* ---------- sections ---------- */
+  section { padding: 56px 20px; }
+  .section-inner { max-width: 1080px; margin: 0 auto; }
+  .eyebrow {
+    font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--rojo);
+    margin: 0 0 8px;
+  }
+  h2 {
+    font-family: 'Bungee', Impact, sans-serif;
+    font-weight: 400;
+    font-size: clamp(22px, 4vw, 30px);
+    color: var(--acero);
+    margin: 0 0 18px;
+    text-wrap: balance;
+  }
+
+  /* about */
+  .about {
+    background: var(--paper);
+  }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 28px;
+    align-items: center;
+  }
+  @media (min-width: 780px) {
+    .about-grid { grid-template-columns: 0.9fr 1.1fr; }
+  }
+  .about-grid img { border-radius: 16px; box-shadow: 0 16px 40px -14px rgba(15,31,66,0.35); }
+  .about p { font-size: 15.5px; line-height: 1.7; color: var(--muted); margin: 0 0 12px; }
+  .about strong { color: var(--ink); }
+  .stat-row { display: flex; gap: 22px; margin-top: 20px; flex-wrap: wrap; }
+  .stat b {
+    display: block;
+    font-family: 'Bungee', Impact, sans-serif;
+    font-size: 26px;
+    color: var(--rojo);
+  }
+  .stat span {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* services */
+  .services-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+  @media (min-width: 700px) {
+    .services-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  .service-card {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 14px 34px -18px rgba(15,31,66,0.35);
+    border: 1px solid var(--line);
+  }
+  .service-card img { height: 190px; object-fit: cover; width: 100%; }
+  .service-body { padding: 18px; }
+  .service-body h3 {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 17px;
+    color: var(--acero);
+    margin: 0 0 8px;
+  }
+  .service-body p { font-size: 13.5px; line-height: 1.55; color: var(--muted); margin: 0; }
+
+  /* why us */
+  .why {
+    background: var(--acero);
+    background-image: radial-gradient(ellipse 900px 500px at 50% -10%, var(--acero-2), transparent 68%);
+  }
+  .why .eyebrow { color: var(--ambar); }
+  .why h2 { color: #fff; }
+  .why-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  @media (min-width: 700px) {
+    .why-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  .why-item {
+    display: flex;
+    gap: 12px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .why-item .ico { font-size: 22px; flex-shrink: 0; }
+  .why-item h4 { margin: 0 0 4px; color: #fff; font-family: 'Baloo 2', sans-serif; font-size: 15px; }
+  .why-item p { margin: 0; color: #c3cbe0; font-size: 13.5px; line-height: 1.5; }
+
+  /* gallery */
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  @media (min-width: 700px) {
+    .gallery-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+  .gallery-grid img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+  @media (min-width: 700px) {
+    .gallery-grid img { height: 190px; }
+  }
+
+  /* contact */
+  .contact { background: var(--paper); }
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  @media (min-width: 780px) {
+    .contact-grid { grid-template-columns: 1.1fr 0.9fr; }
+  }
+  .contact-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 14px 34px -18px rgba(15,31,66,0.35);
+    border: 1px solid var(--line);
+  }
+  .contact-line {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .contact-line .ico { font-size: 19px; flex-shrink: 0; }
+  .contact-line b { display: block; color: var(--acero); font-family: 'Baloo 2', sans-serif; font-size: 14px; }
+  .contact-line span { color: var(--muted); font-size: 13.5px; line-height: 1.5; }
+
+  footer {
+    background: var(--acero);
+    color: #9aa5c2;
+    text-align: center;
+    font-size: 12.5px;
+    padding: 22px;
+  }
+  footer strong { color: #fff; }
+
+  .float-wa {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 50;
+    background: var(--verde);
+    color: #fff;
+    text-decoration: none;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.35);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="#top">FRE<span>U</span>ND</a>
+  <a class="btn-wa-header js-wa" href="#" data-msg="Hola! Vengo de la web de Freund" target="_blank" rel="noopener">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="#fff"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.3L2 22l4.9-1.3C8.4 21.5 10.2 22 12 22c5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18.2c-1.6 0-3.1-.4-4.5-1.2l-.3-.2-3 .8.8-2.9-.2-.3C4 15 3.3 13.5 3.3 12 3.3 7.2 7.2 3.3 12 3.3S20.7 7.2 20.7 12 16.8 20.2 12 20.2zm5.1-6.2c-.3-.1-1.6-.8-1.9-.9-.2-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1-1.5-.7-2.5-1.3-3.5-3-.3-.5.3-.5.7-1.6.1-.2 0-.3 0-.5-.1-.1-.6-1.4-.8-1.9-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9 1-.9 2.3s1 2.7 1.1 2.9c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>
+    WhatsApp
+  </a>
+</header>
+
+<div class="hero" id="top">
+  <div class="hero-inner">
+    <p class="hero-kicker">Chapa · Pintura · Mecánica — desde 2010</p>
+    <h1>Freund significa amigo en alemán.<br>Así tratamos tu auto.</h1>
+    <p>Taller integral en un mismo lugar: reparación de carrocería, cabina de pintura con sistema alemán Glasurit y laboratorio de color propio, y mecánica general.</p>
+    <div class="hero-ctas">
+      <a class="btn-primary js-wa" href="#" data-msg="Hola! Quiero pedir un presupuesto" target="_blank" rel="noopener">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="#fff"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.3L2 22l4.9-1.3C8.4 21.5 10.2 22 12 22c5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
+        Pedir presupuesto
+      </a>
+      <a class="btn-secondary" href="#servicios">Ver servicios</a>
+    </div>
+  </div>
+</div>
+<div class="hazard"></div>
+
+<section class="about">
+  <div class="section-inner about-grid">
+    <img src="img/taller/historia.jpg" alt="Cartel histórico de Freund, taller integral desde 2010">
+    <div>
+      <p class="eyebrow">Quiénes somos</p>
+      <h2>Un taller de barrio con estándar de agencia</h2>
+      <p><strong>Freund</strong> es un taller integral de <strong>chapa, pintura y mecánica</strong> que trabaja desde 2010. Todo el proceso de reparación se hace en un mismo lugar: desestimado, enderezado de estructura, preparación, pintura al horno y mecánica.</p>
+      <p><span class="todo">TODO: 2–3 líneas contando la historia real — cómo arrancó, de dónde salió el nombre, quién lo fundó. (Esto sale directo de la Misión Freund si el dueño ya la respondió.)</span></p>
+      <div class="stat-row">
+        <div class="stat"><b>+15</b><span>Años de oficio</span></div>
+        <div class="stat"><b>3</b><span>Servicios bajo un techo</span></div>
+        <div class="stat"><b>100%</b><span>Pintura importada</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="servicios">
+  <div class="section-inner">
+    <p class="eyebrow">Qué hacemos</p>
+    <h2>Servicios</h2>
+    <div class="services-grid">
+      <div class="service-card">
+        <img src="img/taller/chapa-estiramiento.jpg" alt="Área de estiramiento de carrocería en Freund">
+        <div class="service-body">
+          <h3>Chapa y carrocería</h3>
+          <p>Reparación de carrocería y área de estiramiento (bancada) para devolverle la estructura original al auto después de un golpe.</p>
+        </div>
+      </div>
+      <div class="service-card">
+        <img src="img/taller/cabina-pintura.jpg" alt="Cabina de pintura de Freund">
+        <div class="service-body">
+          <h3>Pintura al horno</h3>
+          <p>Cabina de pintura propia y sistema <strong>Glasurit</strong> (Alemania), con laboratorio de color para igualar el tono exacto de fábrica.</p>
+        </div>
+      </div>
+      <div class="service-card">
+        <img src="img/taller/mecanica-elevadores.jpg" alt="Elevadores de mecánica en Freund">
+        <div class="service-body">
+          <h3>Mecánica general</h3>
+          <p><span class="todo">TODO: confirmar alcance real — ¿mecánica ligera, service, tren delantero? Completar según lo que responda el taller.</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="why">
+  <div class="section-inner">
+    <p class="eyebrow">Por qué Freund</p>
+    <h2>Lo que se nota apenas entrás</h2>
+    <div class="why-grid">
+      <div class="why-item">
+        <div class="ico">🎨</div>
+        <div>
+          <h4>Color exacto, no aproximado</h4>
+          <p>Laboratorio de color propio con sistema Glasurit: se mezcla el tono específico de tu auto, no un color "parecido".</p>
+        </div>
+      </div>
+      <div class="why-item">
+        <div class="ico">🔧</div>
+        <div>
+          <h4>Todo en un mismo lugar</h4>
+          <p>Chapa, pintura y mecánica bajo un mismo techo: menos vueltas, menos tiempo sin el auto.</p>
+        </div>
+      </div>
+      <div class="why-item">
+        <div class="ico">🏗️</div>
+        <div>
+          <h4>Estructura, no solo estética</h4>
+          <p>Área de estiramiento para corregir la estructura del vehículo después de un golpe fuerte, no solo tapar el daño.</p>
+        </div>
+      </div>
+      <div class="why-item">
+        <div class="ico">📋</div>
+        <div>
+          <h4 class="todo">TODO: diferenciador real</h4>
+          <p class="todo">Completar con lo que el taller dijo en la Misión: aseguradoras con las que trabajan, qué autos "salieron mejor de lo que entraron", quién vuelve siempre.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-inner">
+    <p class="eyebrow">Así se ve el taller</p>
+    <h2>Galería</h2>
+    <div class="gallery-grid">
+      <img src="img/taller/vista-general.jpg" alt="Vista general del taller Freund">
+      <img src="img/taller/pintura-prep.jpg" alt="Auto preparado para pintura en Freund">
+      <img src="img/taller/laboratorio-color.jpg" alt="Laboratorio de color, estantería de pinturas Glasurit">
+      <img src="img/taller/carroceria.jpg" alt="Zona de reparación de carrocería">
+      <img src="img/taller/recepcion.jpg" alt="Recepción del taller Freund">
+      <img src="img/taller/logo-taller.jpg" alt="Cartel de Freund, carrocería pintura y mecánica">
+    </div>
+  </div>
+</section>
+
+<section class="contact" id="contacto">
+  <div class="section-inner contact-grid">
+    <div class="contact-card">
+      <p class="eyebrow">Contacto</p>
+      <h2>Traé tu auto</h2>
+      <div class="contact-line">
+        <div class="ico">📍</div>
+        <div><b>Dirección</b><span class="todo">TODO: dirección completa del taller</span></div>
+      </div>
+      <div class="contact-line">
+        <div class="ico">🕒</div>
+        <div><b>Horario</b><span class="todo">TODO: horario real de atención</span></div>
+      </div>
+      <div class="contact-line">
+        <div class="ico">💬</div>
+        <div><b>WhatsApp</b><span class="todo">TODO: número de WhatsApp del taller</span></div>
+      </div>
+      <div class="contact-line">
+        <div class="ico">✉️</div>
+        <div><b>Mail</b><span class="todo">TODO: mail de contacto</span></div>
+      </div>
+      <a class="btn-primary js-wa" href="#" data-msg="Hola! Vengo de la web de Freund" target="_blank" rel="noopener" style="margin-top:6px;">Escribir por WhatsApp</a>
+    </div>
+    <div class="contact-card">
+      <p class="eyebrow">Aseguradoras</p>
+      <h2 style="font-size:19px;">¿Trabajás con seguro?</h2>
+      <p style="font-size:13.5px; color:var(--muted); line-height:1.6;" class="todo">TODO: listar acá las aseguradoras con las que Freund trabaja directamente (si las hay), o sacar esta sección si no aplica.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <strong>FREUND</strong> · Carrocería, Pintura y Mecánica · Desde 2010
+</footer>
+
+<a class="float-wa js-wa" href="#" data-msg="Hola! Vengo de la web de Freund" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.3L2 22l4.9-1.3C8.4 21.5 10.2 22 12 22c5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18.2c-1.6 0-3.1-.4-4.5-1.2l-.3-.2-3 .8.8-2.9-.2-.3C4 15 3.3 13.5 3.3 12 3.3 7.2 7.2 3.3 12 3.3S20.7 7.2 20.7 12 16.8 20.2 12 20.2zm5.1-6.2c-.3-.1-1.6-.8-1.9-.9-.2-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1-1.5-.7-2.5-1.3-3.5-3-.3-.5.3-.5.7-1.6.1-.2 0-.3 0-.5-.1-.1-.6-1.4-.8-1.9-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9 1-.9 2.3s1 2.7 1.1 2.9c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>
+</a>
+
+<script>
+  // TODO: reemplazar por el WhatsApp real del taller (formato 549XXXXXXXXXX, sin + ni espacios)
+  var WA_TALLER = '';
+
+  document.querySelectorAll('.js-wa').forEach(function (el) {
+    var msg = el.getAttribute('data-msg') || '';
+    var numero = WA_TALLER || 'TODO_WHATSAPP';
+    el.href = 'https://wa.me/' + numero + (msg ? '?text=' + encodeURIComponent(msg) : '');
+    if (!WA_TALLER) el.classList.add('todo');
+  });
+</script>
+</body>
+</html>
