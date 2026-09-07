@@ -1253,6 +1253,23 @@
     return '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg> ' + texto;
   }
 
+  // Pega un tramo dictado al texto que ya tenemos, sin repetir lo que se
+  // solapa. Android reenvia la frase entera cada vez que la corrige y suma
+  // una entrada nueva por version, asi que unir a lo bruto duplica todo.
+  function unirTramo(acumulado, tramo) {
+    if (!acumulado) { return tramo; }
+    if (!tramo) { return acumulado; }
+    if (tramo.indexOf(acumulado) === 0) { return tramo; }
+    if (acumulado.indexOf(tramo) === 0) { return acumulado; }
+    if (acumulado.slice(-tramo.length) === tramo) { return acumulado; }
+    for (var k = Math.min(acumulado.length, tramo.length); k > 0; k--) {
+      if (acumulado.slice(-k) === tramo.slice(0, k)) {
+        return acumulado + tramo.slice(k);
+      }
+    }
+    return acumulado + ' ' + tramo;
+  }
+
   function toggleListening(textareaEl, micBtn) {
     if (listening) { stopListening(micBtn); return; }
 
@@ -1262,25 +1279,15 @@
     recognizer.continuous = true;
     recognizer.interimResults = true;
 
-    var base = textareaEl.value ? (textareaEl.value.trim() + ' ') : '';
-    var finales = [];
+    var base = textareaEl.value.trim();
     var reaperturas = 0;
 
-    // Cada tramo se guarda en SU posicion, nunca se suma al texto anterior:
-    // el navegador reenvia lo mismo varias veces mientras corrige.
     recognizer.onresult = function(event) {
-      var enCurso = '';
+      var texto = '';
       for (var i = 0; i < event.results.length; i++) {
-        var r = event.results[i];
-        if (r.isFinal) { finales[i] = r[0].transcript.trim(); }
-        else { enCurso = r[0].transcript.trim(); }
+        texto = unirTramo(texto, event.results[i][0].transcript.trim());
       }
-      var dicho = [];
-      for (var k = 0; k < finales.length; k++) {
-        if (finales[k]) { dicho.push(finales[k]); }
-      }
-      if (enCurso) { dicho.push(enCurso); }
-      textareaEl.value = (base + dicho.join(' ')).trim();
+      textareaEl.value = unirTramo(base, texto);
     };
 
     recognizer.onerror = function(ev) {
@@ -1293,16 +1300,13 @@
       stopListening(micBtn);
     };
 
-    // El telefono corta el microfono a los pocos segundos. Si todavia no
-    // dicto nada lo reabrimos (no hay nada que se pueda duplicar); si ya
-    // dicto algo cortamos, porque al reanudar Android reenvia lo anterior.
+    // El telefono corta el microfono cada pocos segundos: lo reabrimos para
+    // poder hablar tranquilo. Si al reabrir vuelve a dictar lo anterior,
+    // unirTramo lo reconoce y no lo repite.
     recognizer.onend = function() {
       if (!listening) { return; }
-      var yaDicto = false;
-      for (var i = 0; i < finales.length; i++) {
-        if (finales[i]) { yaDicto = true; break; }
-      }
-      if (yaDicto || reaperturas >= 10) { stopListening(micBtn); return; }
+      base = textareaEl.value.trim();
+      if (reaperturas >= 20) { stopListening(micBtn); return; }
       reaperturas++;
       try { recognizer.start(); } catch (e) { stopListening(micBtn); }
     };
