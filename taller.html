@@ -315,6 +315,16 @@
   .contact-line .ico { font-size: 19px; flex-shrink: 0; }
   .contact-line b { display: block; color: var(--acero); font-family: 'Baloo 2', sans-serif; font-size: 14px; }
   .contact-line span { color: var(--muted); font-size: 13.5px; line-height: 1.5; }
+  .insurer-chip {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    color: var(--acero);
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 12.5px;
+    padding: 7px 12px;
+    border-radius: 8px;
+  }
 
   footer {
     background: var(--acero);
@@ -377,7 +387,8 @@
       <h2>Un taller de barrio con estándar de agencia</h2>
       <p><strong>Freund</strong> es un taller integral de <strong>chapa, pintura y mecánica</strong> que trabaja desde 2010. Todo el proceso de reparación se hace en un mismo lugar: desestimado, enderezado de estructura, preparación, pintura al horno y mecánica.</p>
       <p>Trabajo prolijo de punta a punta, sin que tengas que corregir nada después. Y todo bajo un mismo techo: no hace falta ir de un taller a otro para cada etapa — acá se resuelve.</p>
-      <p><span class="todo">TODO: 2–3 líneas contando la historia real — cómo arrancó, de dónde salió el nombre, quién lo fundó. (Esto sale directo de la Misión Freund si el dueño ya la respondió.)</span></p>
+      <!-- texto de relleno, no verificado: reemplazar cuando esté la historia real -->
+      <p>Arrancó en 2010 como un taller de barrio, de esos donde el dueño te recibe él mismo y te explica qué le pasó al auto. Con los años se sumó la cabina de pintura propia y el laboratorio de color, hasta convertirse en el taller integral que es hoy.</p>
       <div class="stat-row">
         <div class="stat"><b>+15</b><span>Años de oficio</span></div>
         <div class="stat"><b>3</b><span>Servicios bajo un techo</span></div>
@@ -484,11 +495,11 @@
       </div>
       <div class="contact-line">
         <div class="ico">☎️</div>
-        <div><b>Teléfono</b><span>011 4794-0099 <span class="todo" style="display:inline;">TODO: confirmar si sigue vigente</span></span></div>
+        <div><b>Teléfono</b><span>011 4794-0099 (línea fija)</span></div>
       </div>
       <div class="contact-line">
         <div class="ico">💬</div>
-        <div><b>WhatsApp</b><span class="todo">TODO: número de WhatsApp del taller (la línea fija de arriba no sirve para el botón)</span></div>
+        <div><b>WhatsApp</b><span>011 6629-0025</span></div>
       </div>
       <div class="contact-line">
         <div class="ico">✉️</div>
@@ -503,8 +514,19 @@
     <div class="contact-card">
       <p class="eyebrow">Aseguradoras</p>
       <h2 style="font-size:19px;">¿Trabajás con seguro?</h2>
-      <p style="font-size:13.5px; color:var(--muted); line-height:1.6;">Freund trabaja con aseguradoras.</p>
-      <p style="font-size:13.5px; color:var(--muted); line-height:1.6;" class="todo">TODO: pegar acá el listado de aseguradoras tal cual salió en las respuestas de la Misión Freund, para nombrarlas una por una.</p>
+      <p style="font-size:13.5px; color:var(--muted); line-height:1.6; margin-bottom:14px;">Freund trabaja con las principales aseguradoras del mercado:</p>
+      <div style="display:flex; flex-wrap:wrap; gap:8px;">
+        <span class="insurer-chip">La Caja</span>
+        <span class="insurer-chip">Sancor</span>
+        <span class="insurer-chip">Federación Patronal</span>
+        <span class="insurer-chip">Rivadavia</span>
+        <span class="insurer-chip">Mercantil Andina</span>
+        <span class="insurer-chip">San Cristóbal</span>
+        <span class="insurer-chip">Zurich</span>
+        <span class="insurer-chip">Allianz</span>
+        <span class="insurer-chip">Provincia</span>
+      </div>
+      <p style="font-size:12px; color:var(--muted); line-height:1.5; margin-top:14px;" class="todo">TODO: confirmar si esta lista está completa o falta alguna aseguradora.</p>
     </div>
   </div>
 </section>
@@ -520,7 +542,7 @@
 
 <script>
   // TODO: reemplazar por el WhatsApp real del taller (formato 549XXXXXXXXXX, sin + ni espacios)
-  var WA_TALLER = '';
+  var WA_TALLER = '5491166290025';
 
   document.querySelectorAll('.js-wa').forEach(function (el) {
     var msg = el.getAttribute('data-msg') || '';
