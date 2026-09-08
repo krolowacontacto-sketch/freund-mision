@@ -216,6 +216,27 @@
   }
   .about p { font-size: 15.5px; line-height: 1.7; color: var(--muted); margin: 0 0 12px; }
   .about strong { color: var(--ink); }
+  .quote {
+    margin: 0 0 14px;
+    padding: 4px 0 4px 16px;
+    border-left: 3px solid var(--rojo);
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 15.5px;
+    line-height: 1.55;
+    color: var(--ink);
+    font-style: italic;
+  }
+  .quote cite {
+    display: block;
+    margin-top: 8px;
+    font-family: 'Manrope', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 12.5px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
   .stat-row { display: flex; gap: 22px; margin-top: 20px; flex-wrap: wrap; }
   .stat b {
     display: block;
@@ -292,6 +313,45 @@
   .why-item .ico { font-size: 22px; flex-shrink: 0; }
   .why-item h4 { margin: 0 0 4px; color: #fff; font-family: 'Baloo 2', sans-serif; font-size: 15px; }
   .why-item p { margin: 0; color: #c3cbe0; font-size: 13.5px; line-height: 1.5; }
+
+  /* clients */
+  .clients { background: var(--paper); }
+  .clients-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  @media (min-width: 700px) {
+    .clients-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+  .client-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 20px 18px;
+    box-shadow: 0 10px 26px -16px rgba(15,31,66,0.3);
+  }
+  .client-ico { font-size: 24px; margin-bottom: 10px; }
+  .client-card h4 {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 15.5px;
+    color: var(--acero);
+    margin: 0 0 8px;
+  }
+  .client-card p { font-size: 13.5px; line-height: 1.55; color: var(--muted); margin: 0; }
+  .client-tag {
+    display: inline-block;
+    margin-top: 8px;
+    background: #fff3f3;
+    color: var(--rojo-dark);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
 
   /* gallery */
   .gallery-grid {
@@ -416,10 +476,11 @@
     <div>
       <p class="eyebrow">Quiénes somos</p>
       <h2>Un taller de barrio con estándar de agencia</h2>
-      <p><strong>Freund</strong> es un taller integral de <strong>chapa, pintura y mecánica</strong> que trabaja desde 2010. Todo el proceso de reparación se hace en un mismo lugar: desestimado, enderezado de estructura, preparación, pintura al horno y mecánica.</p>
-      <p>Trabajo prolijo de punta a punta, sin que tengas que corregir nada después. Y todo bajo un mismo techo: no hace falta ir de un taller a otro para cada etapa — acá se resuelve.</p>
-      <!-- texto de relleno, no verificado: reemplazar cuando esté la historia real -->
-      <p>Arrancó en 2010 como un taller de barrio, de esos donde el dueño te recibe él mismo y te explica qué le pasó al auto. Con los años se sumó la cabina de pintura propia y el laboratorio de color, hasta convertirse en el taller integral que es hoy.</p>
+      <p><strong>Freund</strong> es un taller integral de <strong>chapa, pintura y mecánica</strong> en Olivos. Arrancó en 2010, cuando Alejandro — su dueño actual — compró parte de un negocio en el que ya llevaba años trabajando. El nombre no lo eligió él: ya lo habían puesto los dueños anteriores. Pero le queda perfecto — en alemán, significa <strong>amigo</strong>.</p>
+      <blockquote class="quote">
+        "Marcamos la diferencia en la entrega. Lo que queda estipulado, se cumple — intentamos no fallar desde el primer momento."
+        <cite>— Alejandro, dueño de Freund</cite>
+      </blockquote>
       <div class="stat-row">
         <div class="stat"><b>+15</b><span>Años de oficio</span></div>
         <div class="stat"><b>3</b><span>Servicios bajo un techo</span></div>
@@ -486,11 +547,40 @@
         </div>
       </div>
       <div class="why-item">
-        <div class="ico">📋</div>
+        <div class="ico">⏱️</div>
         <div>
-          <h4>Calidad que no se corrige después</h4>
-          <p>El estándar de terminación es el mismo que en una agencia oficial, pero sin las vueltas de un taller de marca.</p>
+          <h4>El plazo que te decimos, se cumple</h4>
+          <p>Es lo primero que preguntan todos antes de dejar el auto, y es lo que más nos diferencia: si te dijimos una fecha, es esa fecha.</p>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="clients">
+  <div class="section-inner">
+    <p class="eyebrow">A quién le servimos</p>
+    <h2>No es solo trabajo por seguro</h2>
+    <div class="clients-grid">
+      <div class="client-card">
+        <div class="client-ico">🚗</div>
+        <h4>Agencias y concesionarias</h4>
+        <p>Reacondicionamos la unidad que necesitás publicar, con el plazo que te prometimos — no uno que se estira.</p>
+      </div>
+      <div class="client-card">
+        <div class="client-ico">🚐</div>
+        <h4>Empresas con flota</h4>
+        <p>Turnos coordinados para que la utilitaria esté el menor tiempo posible parada. <span class="client-tag">Vuelven seguido</span></p>
+      </div>
+      <div class="client-card">
+        <div class="client-ico">🛡️</div>
+        <h4>Aseguradoras y productores</h4>
+        <p>Trabajamos con <strong>Mercantil Andina</strong>, <strong>Federación Patronal</strong> y <strong>Provincia</strong>. Te mantenemos al tanto del proceso.</p>
+      </div>
+      <div class="client-card">
+        <div class="client-ico">🔑</div>
+        <h4>Particulares</h4>
+        <p>Presupuesto claro, con fotos, y un plazo que se cumple. <span class="client-tag">Vuelven seguido</span></p>
       </div>
     </div>
   </div>
@@ -522,7 +612,7 @@
       </div>
       <div class="contact-line">
         <div class="ico">🕒</div>
-        <div><b>Horario</b><span>Lunes a viernes, 8:30 a 13:00 y 14:00 a 18:00</span></div>
+        <div><b>Horario</b><span>Lunes a viernes, 9:00 a 18:00</span></div>
       </div>
       <div class="contact-line">
         <div class="ico">☎️</div>
@@ -534,7 +624,7 @@
       </div>
       <div class="contact-line">
         <div class="ico">✉️</div>
-        <div><b>Mail</b><span class="todo">TODO: mail de contacto</span></div>
+        <div><b>Mail</b><span class="todo">TODO: la atención es sobre todo por WhatsApp — confirmar si hay mail o se saca esta línea.</span></div>
       </div>
       <div class="contact-line">
         <div class="ico">📷</div>
@@ -545,19 +635,13 @@
     <div class="contact-card">
       <p class="eyebrow">Aseguradoras</p>
       <h2 style="font-size:19px;">¿Trabajás con seguro?</h2>
-      <p style="font-size:13.5px; color:var(--muted); line-height:1.6; margin-bottom:14px;">Freund trabaja con las principales aseguradoras del mercado:</p>
+      <p style="font-size:13.5px; color:var(--muted); line-height:1.6; margin-bottom:14px;">Las aseguradoras con las que trabajamos más seguido:</p>
       <div style="display:flex; flex-wrap:wrap; gap:8px;">
-        <span class="insurer-chip">La Caja</span>
-        <span class="insurer-chip">Sancor</span>
-        <span class="insurer-chip">Federación Patronal</span>
-        <span class="insurer-chip">Rivadavia</span>
         <span class="insurer-chip">Mercantil Andina</span>
-        <span class="insurer-chip">San Cristóbal</span>
-        <span class="insurer-chip">Zurich</span>
-        <span class="insurer-chip">Allianz</span>
+        <span class="insurer-chip">Federación Patronal</span>
         <span class="insurer-chip">Provincia</span>
       </div>
-      <p style="font-size:12px; color:var(--muted); line-height:1.5; margin-top:14px;" class="todo">TODO: confirmar si esta lista está completa o falta alguna aseguradora.</p>
+      <p style="font-size:12px; color:var(--muted); line-height:1.5; margin-top:14px;">La mayoría de los clientes nuevos llegan derivados por la aseguradora.</p>
     </div>
   </div>
 </section>
